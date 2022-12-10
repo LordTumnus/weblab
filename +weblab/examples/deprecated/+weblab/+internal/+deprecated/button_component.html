@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript">
+        function setup(uihtml) {
+            let button = document.getElementById("myButton");
+            
+            uihtml.addEventListener("DataChanged", function () {                
+                if ("Style" in uihtml.Data) {
+                    Object.assign(button.style, uihtml.Data.Style);
+                }
+                if ("Text" in uihtml.Data) {
+                    button.textContent = uihtml.Data.Text;
+                }
+            });
+            
+            button.onclick = function() {
+                uihtml.Data = {name: "click", data: {}};
+            };
+            button.onmouseenter = function(evt) {
+                uihtml.Data = {name: "mouseEnter", data: {x: evt.clientX, y:evt.clientY}};
+            };
+            button.onmouseleave = function(evt) {
+                uihtml.Data = {name: "mouseLeave", data: {x: evt.clientX, y:evt.clientY}};
+            };
+        }
+    </script>
+</head>
+
+<body>
+    <button id="myButton">Click me</button>  
+</body>
+</html>

@@ -8,6 +8,9 @@
 % through the >> markAsDirty << protected method
 % Subclasses can also react to a view event by subscribing to it with the 
 % >> subscribe << method. 
+%
+% See the post in which I discuss this class:
+% https://matlabthoughts.com
 
 classdef Component < matlab.ui.componentcontainer.ComponentContainer
 
@@ -36,23 +39,21 @@ classdef Component < matlab.ui.componentcontainer.ComponentContainer
     end
 
     methods
-        function this = Component(containerArgs)
+        function this = Component(varargin)
             % COMPONENT constructor. Initializes a custom component by creating
             % an uihtml element whose html source is the one specified in the
             % constant properties
-            arguments
-                containerArgs.?matlab.ui.componentcontainer.ComponentContainer;
-            end
+
             % Call the superclass constructor (which will also invoke the setup
-            % method) and assign the html source file
-            this@matlab.ui.componentcontainer.ComponentContainer(containerArgs{:});
+            % method)
+            this@matlab.ui.componentcontainer.ComponentContainer(varargin{:});
         end
 
         function markAsDirty(this, propertyName)
             % MARKASDIRTY specifies that a given property from the class needs
             % to be updated on the view
             arguments
-                this (1,1) Component
+                this (1,1) weblab.internal.deprecated.Component
                 propertyName (1,1) string {mustBeValidVariableName}
             end
 
@@ -64,7 +65,7 @@ classdef Component < matlab.ui.componentcontainer.ComponentContainer
             % SUBSCRIBE stores a callback function to a given event sent from
             % the view
             arguments
-                this (1,1) Component
+                this (1,1) weblab.internal.deprecated.Component
                 eventName (1,1) string {mustBeValidVariableName}
                 callback (1,1) function_handle {mustHaveTwoArguments}
             end
@@ -94,7 +95,6 @@ classdef Component < matlab.ui.componentcontainer.ComponentContainer
         function update(this)
             % UPDATE is executed on every drawnow (graphics update) event. Will
             % send the dirty properties to the view
-
             if ~isempty(fieldnames(this.DirtyProperties))
                 % Send data if there are any dirty properties
                 this.HTMLElement.Data = this.DirtyProperties;
@@ -111,15 +111,16 @@ classdef Component < matlab.ui.componentcontainer.ComponentContainer
             % from the view. If the data contains a field "name" that matches a 
             % subscribed event, the associated callback will be executed
             arguments
-                this (1,1) Component
+                this (1,1) weblab.internal.deprecated.Component
                 event (1,1) struct
             end
 
             % Check that the event name matches a subscription
-            if isfield(event, "name") && isfield(this.Subscriptions, event.name)
+            if all(isfield(event, ["name","data"])) && ...
+               isfield(this.Subscriptions, event.name)
                 % Evaluate the function handle with 2 arguments: the
                 % component(src) and the event(evt)
-                this.Subscriptions.(event.name)(this, event);
+                this.Subscriptions.(event.name)(this, event.data);
                 % equivalent to 
                 % >>feval(this.Subscriptions.(event.name), this, event)
             end
