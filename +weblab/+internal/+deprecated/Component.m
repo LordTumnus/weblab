@@ -10,7 +10,7 @@
 % >> subscribe << method. 
 %
 % See the post in which I discuss this class:
-% https://matlabthoughts.com
+% https://matlabthoughts.com/2022/12/11/creating-an-abstract-component/
 
 classdef Component < matlab.ui.componentcontainer.ComponentContainer
 

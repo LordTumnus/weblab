@@ -8,7 +8,7 @@
 % - mouse enter / mouse leave events
 %
 % Inherits from the Component class, as described in 
-% https://matlabthoughts.com
+% https://matlabthoughts.com/2022/12/11/creating-an-abstract-component/
 
 
 classdef Button < weblab.internal.deprecated.Component
