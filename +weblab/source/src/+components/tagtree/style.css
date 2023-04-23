@@ -1,0 +1,42 @@
+weblab-tagtree {
+  display: flex;
+  flex-direction: column;
+  align-content: center;
+  justify-content: center;
+  overflow: hidden;
+  row-gap: 5px;
+}
+
+weblab-tagtree > .tagbar {
+  height: 3em;
+  padding: 0;
+}
+
+weblab-tagtree > .tagbar .tagify {
+  overflow-x: scroll;
+  flex-wrap: nowrap;
+  align-content: center;
+}
+
+weblab-tagtree > weblab-tree {
+  flex-grow: 1;
+}
+
+weblab-tagtree .tagify__input {
+  white-space: nowrap;
+}
+
+.tagify__tag-icon {
+  margin-right: 5px;
+  color: #777;
+  overflow: visible;
+}
+
+.tagify__tag-icon > i:nth-child(2) {
+  margin-left: -1em;
+}
+
+.fa-ban,
+.fa-slash {
+  color: red;
+}

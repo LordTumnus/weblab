@@ -1,0 +1,90 @@
+.tagbar {
+  box-sizing: border-box;
+  padding: 1px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+}
+
+.tagify {
+  flex-wrap: wrap;
+  height: 100%;
+  overflow: hidden;
+  font-family: "Roboto Mono", monospace;
+  font-weight: 200;
+  line-height: 1.2em;
+  min-height: 2.8em;
+  --tags-border-color: #ccc;
+  --tag-bg: rgb(240, 240, 240);
+  background-color: white;
+  align-items: center;
+  align-content: flex-start;
+}
+
+.tagify::-webkit-scrollbar {
+  display: none;
+}
+
+.tagify__tag {
+  line-height: 1.1em;
+}
+.tagify__tag:focus div::before {
+  box-shadow: 0 0 0 1.1em #d3e2e2 inset;
+  box-shadow: 0 0 0 var(--tag-inset-shadow-size, 1.1em)
+    var(--tag-hover, #d3e2e2) inset;
+}
+
+.tagify__tag:hover:not([readonly]) div::before {
+  box-shadow: 0 0 0 1.1em #e5e5e5 inset;
+  box-shadow: 0 0 0 var(--tag-inset-shadow-size, 1.1em) var(--tag-bg, #e5e5e5)
+    inset;
+}
+
+.tagify__tag:hover:not([readonly]):focus div::before {
+  box-shadow: 0 0 0 1.1em #d3e2e2 inset;
+  box-shadow: 0 0 0 var(--tag-inset-shadow-size, 1.1em)
+    var(--tag-hover, #d3e2e2) inset;
+}
+
+/* roboto-mono-200 - latin */
+@font-face {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 200;
+  src: url("../../fonts/roboto/roboto-mono-v13-latin-200.eot"); /* IE9 Compat Modes */
+  src: local(""),
+    url("../../fonts/roboto/roboto-mono-v13-latin-200.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("../../fonts/roboto/roboto-mono-v13-latin-200.woff2")
+      format("woff2"),
+    /* Super Modern Browsers */
+      url("../../fonts/roboto/roboto-mono-v13-latin-200.woff") format("woff"),
+    /* Modern Browsers */
+      url("../../fonts/roboto/roboto-mono-v13-latin-200.ttf") format("truetype"),
+    /* Safari, Android, iOS */
+      url("../../fonts/roboto/roboto-mono-v13-latin-200.svg#RobotoMono")
+      format("svg"); /* Legacy iOS */
+}
+/* roboto-mono-regular - latin */
+@font-face {
+  font-family: "Roboto Mono";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../../fonts/roboto/roboto-mono-v13-latin-regular.eot"); /* IE9 Compat Modes */
+  src: local(""),
+    url("../../fonts/roboto/roboto-mono-v13-latin-regular.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("../../fonts/roboto/roboto-mono-v13-latin-regular.woff2")
+      format("woff2"),
+    /* Super Modern Browsers */
+      url("../../fonts/roboto/roboto-mono-v13-latin-regular.woff")
+      format("woff"),
+    /* Modern Browsers */
+      url("../../fonts/roboto/roboto-mono-v13-latin-regular.ttf")
+      format("truetype"),
+    /* Safari, Android, iOS */
+      url("../../fonts/roboto/roboto-mono-v13-latin-regular.svg#RobotoMono")
+      format("svg"); /* Legacy iOS */
+}
