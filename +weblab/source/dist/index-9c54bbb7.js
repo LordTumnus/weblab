@@ -1,8 +1,8 @@
 import { n, C as ComponentContainer, _ as __classPrivateFieldGet, d as debounce } from './index.js';
-import TagBar from './index-9ccaa4cc.js';
-import { d as dom$1, c as config$1, l as library$1, f as faFolder, a as faBan, b as faSlash, T as Tree } from './index-4a9bbf45.js';
+import TagBar from './index-fd911dbc.js';
+import { d as dom$1, c as config$1, l as library$1, f as faFolder, a as faBan, b as faSlash, T as Tree } from './index-e32b3078.js';
 
-var css = "weblab-tagtree {\n  display: flex;\n  flex-direction: column;\n  align-content: center;\n  justify-content: center;\n  overflow: hidden;\n  row-gap: 5px;\n}\n\nweblab-tagtree > .tagbar {\n  height: 3em;\n  padding: 0;\n}\n\nweblab-tagtree > .tagbar .tagify {\n  overflow-x: scroll;\n  flex-wrap: nowrap;\n  align-content: center;\n}\n\nweblab-tagtree > weblab-tree {\n  flex-grow: 1;\n}\n\nweblab-tagtree .tagify__input {\n  white-space: nowrap;\n}\n\n.tagify__tag-icon {\n  margin-right: 5px;\n  color: #777;\n  overflow: visible;\n}\n\n.tagify__tag-icon > i:nth-child(2){\n  margin-left: -1em;\n}\n\n.fa-ban, .fa-slash {\n  color: red;\n}\n";
+var css = "weblab-tagtree {\n  display: flex;\n  flex-direction: column;\n  align-content: center;\n  justify-content: center;\n  overflow: hidden;\n  row-gap: 5px;\n}\n\nweblab-tagtree > .tagbar {\n  height: 3em;\n  padding: 0;\n}\n\nweblab-tagtree > .tagbar .tagify {\n  overflow-x: scroll;\n  flex-wrap: nowrap;\n  align-content: center;\n}\n\nweblab-tagtree > weblab-tree {\n  flex-grow: 1;\n}\n\nweblab-tagtree .tagify__input {\n  white-space: nowrap;\n}\n\n.tagify__tag-icon {\n  margin-right: 5px;\n  color: #777;\n  overflow: visible;\n}\n\n.tagify__tag-icon > i:nth-child(2) {\n  margin-left: -1em;\n}\n\n.fa-ban,\n.fa-slash {\n  color: red;\n}\n";
 n(css,{});
 
 var _TagTree_instances, _TagTree_initialize, _TagTree_getTagProperties, _TagTree_styleTag;

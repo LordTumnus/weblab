@@ -1838,11 +1838,11 @@ function mapComponent(className) {
     return __awaiter(this, void 0, void 0, function* () {
         switch (className) {
             case 'weblab.components.Tree':
-                return yield import('./index-4a9bbf45.js').then(function (n) { return n.i; });
+                return yield import('./index-e32b3078.js').then(function (n) { return n.i; });
             case 'weblab.components.TagBar':
-                return yield import('./index-9ccaa4cc.js');
+                return yield import('./index-fd911dbc.js');
             case 'weblab.components.TagFilterTree':
-                return yield import('./index-2426ba64.js');
+                return yield import('./index-9c54bbb7.js');
             default:
                 return;
         }
