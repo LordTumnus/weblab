@@ -26,3 +26,8 @@
 | TagsChanged   	| [ Debounced ]Triggered whenever a tags is changed or removed |
 | Focus   	| Triggered when the tagbar gains focus |
 | Blur   	| Triggered when the tagbar loses focus |
+
+
+## Credits
+
+This component uses the amaing [Tagify](https://github.com/yairEO/tagify) library.
