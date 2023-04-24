@@ -78,6 +78,9 @@ the terminal
 ```bash
 $ npm run build
 ```
+## Issues and PRs
+
+Issues and pull requests are appreciated. I will do my best to take into account your opinions and recommendations
 
 ## License
 
