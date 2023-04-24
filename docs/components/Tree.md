@@ -17,3 +17,5 @@
 | filter  	    | Redraw the tree by filtering the nodes that match the input name and type.<br> Allowed types of filtering are: `leaf`, `~leaf`, `branch`, `~branch`. </br>  	|
 
 ## Events
+
+## [Styling](../styling.md) 

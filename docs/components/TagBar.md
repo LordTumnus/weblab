@@ -28,6 +28,9 @@
 | Blur   	| Triggered when the tagbar loses focus |
 
 
+## [Styling](../styling.md) 
+
+
 ## Credits
 
 This component uses the amaing [Tagify](https://github.com/yairEO/tagify) library.
