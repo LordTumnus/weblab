@@ -2,6 +2,7 @@ weblab-tree {
   display: flex;
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 
 .treeview {
@@ -13,9 +14,8 @@ weblab-tree {
   color: #212529;
   background-color: rgb(255, 255, 255);
   font-family: "Roboto Mono", monospace;
-  /*font-size: 12px;*/
   font-weight: 200;
-  /*line-height: 1;*/
+  overflow-y: scroll;
 }
 
 .treeview:focus {

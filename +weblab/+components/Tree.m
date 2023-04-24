@@ -31,6 +31,14 @@ classdef Tree < weblab.internal.FrameComponent & ...
                 value, type, 'UniformOutput', false);
             this.publish(weblab.event.Event("apply_filter", tags));
         end
+
+        function expandAll(this)
+            this.publish(weblab.event.Event("expand_all", []));
+        end
+
+        function collapseAll(this)
+            this.publish(weblab.event.Event("collapse_all", []));
+        end
     end
 end
 

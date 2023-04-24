@@ -18,7 +18,7 @@ export default class Tree extends Component {
     constructor() {
         super();
         this.#initialize();
-        // @ts-ignore <-- if you use typescript
+        // @ts-ignore
         _.dom.watch({
             autoReplaceSvgRoot: this,
             observeMutationsRoot: this
@@ -26,6 +26,14 @@ export default class Tree extends Component {
 
         this.subscribe("apply_filter", (f: { value: string, type: "leaf" | "branch" | "~leaf" | "~branch" }[]) => {
             this.filter(...f);
+        })
+
+        this.subscribe("expand_all", () => {
+            this.expandAll();
+        })
+
+        this.subscribe("collapse_all", () => {
+            this.collapseAll();
         })
     }
 
@@ -118,6 +126,38 @@ export default class Tree extends Component {
             filteredTree = { name: "root", children: [] }
         }
         this.#renderTree(filteredTree);
+    }
+
+    expandAll() {
+        this.Data = _.mapValuesDeep(
+            this.Data,
+            (node: any) => {
+                if (node.children.length !== 0) {
+                    node["expanded"] = true;
+                }
+                return node;
+            }, 
+            {
+                childrenPath: ['node', 'children'],
+            }
+        )
+        this.#renderTree(this.Data);
+    }
+
+    collapseAll() {
+        this.Data = _.mapValuesDeep(
+            this.Data,
+            (node: any) => {
+                if (node.children.length !== 0) {
+                    node["expanded"] = false;
+                }
+                return node;
+            }, 
+            {
+                childrenPath: ['node', 'children'],
+            }
+        )
+        this.#renderTree(this.Data);
     }
 
 
