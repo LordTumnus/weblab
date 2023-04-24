@@ -12,6 +12,3 @@ window["setup"] = function (html:any) {
     connector.setup(html);
 };
 
-
-
-

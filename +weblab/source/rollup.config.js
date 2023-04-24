@@ -10,7 +10,9 @@ export default {
     dir: "dist",
     format: "es",
     assetFileNames: "[name]-[hash][extname]",
+    inlineDynamicImports: true,
   },
+  
   plugins: [
     resolve(),
     commonjs(),
