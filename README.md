@@ -12,6 +12,8 @@
   <a href="#license">License</a>
 </p>
 
+
+
 ## How To Use
 
 To use a custom component, you will to create a
@@ -35,11 +37,11 @@ frame.insert(myComponent);
 
 ## Components
 
-Currently, these components are supported
+These components are currently supported:
 
-- Tree
-- TagBar
-- TagFilterTree
+- [Tree](/docs/Tree.md)
+- [TagBar](/docs/TagBar.md)
+- [TagFilterTree](/docs/TagFilterTree.md)
 
 ## Developing your own components
 
