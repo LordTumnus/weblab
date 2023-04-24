@@ -43,7 +43,7 @@ These components are currently supported:
 - [TagBar](/docs/components/TagBar.md)
 - [TagFilterTree](/docs/components/TagFilterTree.md)
 
-More to come! These are the planned components:
+More to come! These are the next planned components:
 - ProgressBar
 - Code Editor
 - PDF renderer
