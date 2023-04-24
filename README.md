@@ -39,9 +39,15 @@ frame.insert(myComponent);
 
 These components are currently supported:
 
-- [Tree](/docs/Tree.md)
-- [TagBar](/docs/TagBar.md)
-- [TagFilterTree](/docs/TagFilterTree.md)
+- [Tree](/docs/components/Tree.md)
+- [TagBar](/docs/components/TagBar.md)
+- [TagFilterTree](/docs/components/TagFilterTree.md)
+
+More to come! These are the planned components:
+- ProgressBar
+- Code Editor
+- PDF renderer
+- Interactive plots
 
 ## Developing your own components
 
