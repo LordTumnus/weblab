@@ -2,6 +2,8 @@
   WEBLAB
 </h1>
 
+[![View Custom uifugure components on File Exchange](https://www.mathworks.com/matlabcentral/images/matlab-file-exchange.svg)](https://www.mathworks.com/matlabcentral/fileexchange/128439-custom-uifugure-components)
+
 <h4 align="center">A tool for developing custom <em>uifigure</em> components in Matlab</h4>
 
 
