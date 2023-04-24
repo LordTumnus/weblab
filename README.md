@@ -18,7 +18,7 @@
 
 To use a custom component, you will to create a
 [Frame](/%2Bweblab/%2Binternal/Frame.m) inside the `uifigure` and then insert
-your compoment into it.
+your component into it.
 
 ```matlab
 % Create the uifigure
@@ -26,7 +26,7 @@ uifig = uifigure();
 % Create the frame
 frame = weblab.internal.Frame("Parent", uifig);
 % Initialize your component
-myComponent = weblab.internal.MyComponent();
+myComponent = weblab.components.MyComponent();
 % Insert
 frame.insert(myComponent);
 ```
@@ -39,9 +39,9 @@ frame.insert(myComponent);
 
 These components are currently supported:
 
-- [Tree](/docs/components/Tree.md)
-- [TagBar](/docs/components/TagBar.md)
-- [TagFilterTree](/docs/components/TagFilterTree.md)
+- Tree: [docs](/docs/components/Tree.md) / [src](/%2Bweblab/%2Bcomponents/Tree.m)
+- TagBar: [docs](/docs/components/TagBar.md) / [src](/%2Bweblab/%2Bcomponents/TagBar.m)
+- TagFilterTree: [docs](/docs/components/TagFilterTree.md) / [src](/%2Bweblab/%2Bcomponents/TagFilterTree.m)
 
 More to come! These are the next planned components:
 - ProgressBar
