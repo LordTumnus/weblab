@@ -1,6 +1,6 @@
 # CSS Styling
 
-All the components that inherir from the `weblab.components.mixin.Stylable` support advanced styling rules through their `style` and `pstyle` methods
+All the components that inherir from the `weblab.components.mixin.Styled` support advanced styling rules through their `style` and `pstyle` methods
 
 
 | Style  	| Description   	|
