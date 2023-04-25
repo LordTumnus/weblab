@@ -6,12 +6,13 @@
   flex-wrap: nowrap;
   align-content: center;
   justify-content: center;
+  overflow: hidden
 }
 
 .tagify {
   flex-wrap: wrap;
   height: 100%;
-  overflow: hidden;
+  overflow-y: scroll;
   font-family: "Roboto Mono", monospace;
   font-weight: 200;
   line-height: 1.2em;
