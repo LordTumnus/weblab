@@ -21,11 +21,17 @@ export default class Component extends HTMLElement {
      */
     cssResult: CssObj.Result;
 
+    cssClassName: string
+
     constructor() {
         super();
         this.subscribe("wb__dirty_prop", (data: any) => { this.setDirtyProperty(data) });
-        this.cssResult = cssobj({ ".styleable": {} }, { local: true });
-        this.classList.add(this.cssResult.mapClass(".styleable"));
+
+        // CSSObj 
+        const randCSSId = (Math.random() + 1).toString(36).substring(6);
+        this.cssClassName = `styleable_${randCSSId}`;
+        this.classList.add(this.cssClassName);
+        this.cssResult = cssobj({ ["."+this.cssClassName]: {} });
     }
 
     /**
@@ -71,6 +77,6 @@ export default class Component extends HTMLElement {
      * @param {any} s The style from matlab
      */
     set css_style(s: any) {
-        this.cssResult.update({ ".styleable": s })
+        this.cssResult.update({ ["."+this.cssClassName]: s })
     }
 }
