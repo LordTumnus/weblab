@@ -1,5 +1,14 @@
 weblab-progress {
   display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.progress__linear--container {
+  width: 100%;
+  height: 100%;
+  display: flex;
 }
 
 .progress__linear--root {
@@ -9,6 +18,14 @@ weblab-progress {
   display: block;
   z-index: 0;
   background-color: rgb(167, 202, 237);
+}
+
+.progress__linear--root.round-borders {
+  border-radius: 5%;
+}
+
+.progress__linear--root.pill-borders {
+  border-radius: 5000px;
 }
 
 .progress__linear--bar {
@@ -27,6 +44,17 @@ weblab-progress {
 .progress__linear--bar--indeterminate {
     width: auto;
     animation: 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite normal none running linear-indeterminate;
+}
+
+.progress__linear--value {
+  min-width: 35px;
+  display: none;
+  overflow: hidden;
+}
+
+.progress__linear--value.display {
+  display: block;
+  text-align: center;
 }
 
 @keyframes linear-indeterminate {

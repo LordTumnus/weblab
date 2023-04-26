@@ -5,6 +5,8 @@ classdef LinearProgress < weblab.internal.FrameComponent & ...
         ProgressType
         Value
         Indeterminate
+        ShowValue
+        BorderStyle
     end
 
 

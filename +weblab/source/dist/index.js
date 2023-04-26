@@ -15803,18 +15803,17 @@ var index$1 = /*#__PURE__*/Object.freeze({
 	default: TagTree
 });
 
-var css = "weblab-progress {\n  display: flex;\n}\n\n.progress__linear--root {\n  flex-grow: 1;\n  position: relative;\n  overflow: hidden;\n  display: block;\n  z-index: 0;\n  background-color: rgb(167, 202, 237);\n}\n\n.progress__linear--bar {\n  position: absolute;\n  left: 0px;\n  bottom: 0px;\n  top: 0px;\n  width: 100%;\n  transform: translateX(-100%);\n  transition: transform 0.2s linear;\n  transform-origin: left;\n  transform-origin: left center;\n  background-color: #1976d2;\n}\n\n.progress__linear--bar--indeterminate {\n    width: auto;\n    animation: 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite normal none running linear-indeterminate;\n}\n\n@keyframes linear-indeterminate {\n  0% {\n    left: -35%;\n    right: 100%;\n  }\n  60% {\n    left: 100%;\n    right: -90%;\n  }\n  100% {\n    left: 100%;\n    right: -90%;\n  }\n}\n";
+var css = "weblab-progress {\n  display: flex;\n  align-items: center;\n  position: relative;\n  overflow: hidden;\n}\n\n.progress__linear--container {\n  width: 100%;\n  height: 100%;\n  display: flex;\n}\n\n.progress__linear--root {\n  flex-grow: 1;\n  position: relative;\n  overflow: hidden;\n  display: block;\n  z-index: 0;\n  background-color: rgb(167, 202, 237);\n}\n\n.progress__linear--root.round-borders {\n  border-radius: 5%;\n}\n\n.progress__linear--root.pill-borders {\n  border-radius: 5000px;\n}\n\n.progress__linear--bar {\n  position: absolute;\n  left: 0px;\n  bottom: 0px;\n  top: 0px;\n  width: 100%;\n  transform: translateX(-100%);\n  transition: transform 0.2s linear;\n  transform-origin: left;\n  transform-origin: left center;\n  background-color: #1976d2;\n}\n\n.progress__linear--bar--indeterminate {\n    width: auto;\n    animation: 2.1s cubic-bezier(0.165, 0.84, 0.44, 1) 1.15s infinite normal none running linear-indeterminate;\n}\n\n.progress__linear--value {\n  min-width: 35px;\n  display: none;\n  overflow: hidden;\n}\n\n.progress__linear--value.display {\n  display: block;\n  text-align: center;\n}\n\n@keyframes linear-indeterminate {\n  0% {\n    left: -35%;\n    right: 100%;\n  }\n  60% {\n    left: 100%;\n    right: -90%;\n  }\n  100% {\n    left: 100%;\n    right: -90%;\n  }\n}\n";
 n(css,{});
 
-var _Progress_instances, _Progress_bar, _Progress_root, _Progress_redraw, _Progress_drawLinearProgressBar, _Progress_drawCircularProgressBar;
+var _Progress_instances, _Progress_redraw, _Progress_drawLinearProgressBar, _Progress_drawCircularProgressBar, _Progress_setLinearIndeterminate, _Progress_setCircularIndeterminate;
 class Progress extends Component {
     constructor() {
         super();
         _Progress_instances.add(this);
         this.currentValue = 0;
         this.isIndeterminate = false;
-        _Progress_bar.set(this, void 0);
-        _Progress_root.set(this, void 0);
+        this.isShowingValue = false;
     }
     set progress_type(t) {
         if (t !== this.progressType) {
@@ -15825,7 +15824,21 @@ class Progress extends Component {
     set value(v) {
         this.currentValue = v;
         if (!this.isIndeterminate) {
-            __classPrivateFieldGet(this, _Progress_bar, "f").style.transform = `translateX(${v - 100}%)`;
+            (this.progressType === 'linear') && setLinearValue(v);
+            (this.progressType === 'circular') && setCircularValue();
+        }
+    }
+    set show_value(tf) {
+        if (this.isShowingValue === tf) {
+            return;
+        }
+        this.isShowingValue = tf;
+        if (this.isIndeterminate) {
+            return;
+        }
+        if (this.progressType === 'linear') {
+            const value = document.querySelector('.progress__linear--value');
+            tf ? value.classList.add("display") : value.classList.remove("display");
         }
     }
     set indeterminate(tf) {
@@ -15833,17 +15846,29 @@ class Progress extends Component {
             return;
         }
         this.isIndeterminate = tf;
-        if (tf) {
-            __classPrivateFieldGet(this, _Progress_bar, "f").style.transform = "unset";
-            __classPrivateFieldGet(this, _Progress_bar, "f").classList.add("progress__linear--bar--indeterminate");
+        (this.progressType === 'linear') && __classPrivateFieldGet(this, _Progress_instances, "m", _Progress_setLinearIndeterminate).call(this, tf);
+        (this.progressType === 'circular') && __classPrivateFieldGet(this, _Progress_instances, "m", _Progress_setCircularIndeterminate).call(this, tf);
+    }
+    set border_style(s) {
+        if (this.progressType === 'circular') {
+            return;
+        }
+        const root = document.querySelector('.progress__linear--root');
+        if (s === 'round') {
+            root.classList.add("round-borders");
+            root.classList.remove("pill-borders");
+        }
+        else if (s === 'pill') {
+            root.classList.add("pill-borders");
+            root.classList.remove("round-borders");
         }
         else {
-            __classPrivateFieldGet(this, _Progress_bar, "f").classList.remove("progress__linear--bar--indeterminate");
-            __classPrivateFieldGet(this, _Progress_bar, "f").style.transform = `translateX(${this.currentValue - 100}%)`;
+            root.classList.remove("round-borders");
+            root.classList.remove("pill-borders");
         }
     }
 }
-_Progress_bar = new WeakMap(), _Progress_root = new WeakMap(), _Progress_instances = new WeakSet(), _Progress_redraw = function _Progress_redraw() {
+_Progress_instances = new WeakSet(), _Progress_redraw = function _Progress_redraw() {
     this.innerHTML = "";
     switch (this.progressType) {
         case 'linear':
@@ -15857,15 +15882,44 @@ _Progress_bar = new WeakMap(), _Progress_root = new WeakMap(), _Progress_instanc
             break;
     }
 }, _Progress_drawLinearProgressBar = function _Progress_drawLinearProgressBar() {
-    __classPrivateFieldSet(this, _Progress_root, document.createElement('span'), "f");
-    __classPrivateFieldGet(this, _Progress_root, "f").classList.add("progress__linear--root");
-    __classPrivateFieldSet(this, _Progress_bar, document.createElement('span'), "f");
-    __classPrivateFieldGet(this, _Progress_bar, "f").classList.add("progress__linear--bar");
-    __classPrivateFieldGet(this, _Progress_root, "f").appendChild(__classPrivateFieldGet(this, _Progress_bar, "f"));
-    this.appendChild(__classPrivateFieldGet(this, _Progress_root, "f"));
+    let container = document.createElement('div');
+    container.classList.add("progress__linear--container");
+    let value = document.createElement('div');
+    value.classList.add("progress__linear--value");
+    value.innerHTML = "0%";
+    let root = document.createElement('span');
+    root.classList.add("progress__linear--root");
+    let bar = document.createElement('span');
+    bar.classList.add("progress__linear--bar");
+    root.appendChild(bar);
+    container.appendChild(root);
+    this.appendChild(container);
+    this.appendChild(value);
 }, _Progress_drawCircularProgressBar = function _Progress_drawCircularProgressBar() {
+}, _Progress_setLinearIndeterminate = function _Progress_setLinearIndeterminate(tf) {
+    const bar = document.querySelector(".progress__linear--bar");
+    const value = document.querySelector(".progress__linear--value");
+    if (tf) {
+        bar.style.transform = "unset";
+        value.classList.remove("display");
+        bar.classList.add("progress__linear--bar--indeterminate");
+    }
+    else {
+        this.isShowingValue ? value.classList.add("display") : value.classList.remove("display");
+        bar.classList.remove("progress__linear--bar--indeterminate");
+        setLinearValue(this.currentValue);
+    }
+}, _Progress_setCircularIndeterminate = function _Progress_setCircularIndeterminate(tf) {
 };
 customElements.define('weblab-progress', Progress);
+function setLinearValue(v) {
+    const bar = document.querySelector(".progress__linear--bar");
+    bar.style.transform = `translateX(${v - 100}%)`;
+    const value = document.querySelector(".progress__linear--value");
+    value.innerHTML = `${Math.floor(v)}%`;
+}
+function setCircularValue(v) {
+}
 
 var index = /*#__PURE__*/Object.freeze({
 	__proto__: null,
