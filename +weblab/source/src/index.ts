@@ -11,4 +11,3 @@ document.body.appendChild(frame);
 window["setup"] = function (html:any) {
     connector.setup(html);
 };
-
