@@ -16,9 +16,12 @@
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-typescript": "^11.1.0",
+    "@tsconfig/svelte": "^4.0.1",
     "@types/lodash": "^4.14.194",
     "@types/yaireo__tagify": "^4.17.0",
     "rollup": "^3.21.0",
+    "rollup-plugin-svelte": "^7.1.4",
+    "svelte-preprocess": "^5.0.3",
     "terser": "^5.17.1",
     "tslib": "^2.5.0"
   },

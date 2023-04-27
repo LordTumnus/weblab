@@ -1,17 +1,14 @@
-// COMPONENTONTAINER
 import Component from "./component";
+import type {ComponentType} from './component';
 import connector from "./connector";
 import mapComponent from "./mapComponent";
-
-
-
 export default class ComponentContainer extends Component {
 
     /**
      * Children components from this container
-     * @type {Array<Component>}
+     * @type {Array<ComponentType>}
      */
-    components: Array<Component> = [];
+    components: Array<ComponentType> = [];
 
     constructor() {
         super();
@@ -31,7 +28,7 @@ export default class ComponentContainer extends Component {
      * Append an existing element into the container
      * @param {Component} el The element added to the component
      */
-    appendComponent(el: Component) {
+    appendComponent(el: ComponentType) {
         this.appendChild(el);
         this.components.push(el);
         connector.register(el);
@@ -43,7 +40,7 @@ export default class ComponentContainer extends Component {
      * @param {{id:string, class:string}} data Object containing the id and class of the inserted element
      * @returns {Promise<Component>} A promise resolving to the inserted element
      */
-    async insertComponent(data: { id: string, class: string }): Promise<Component|undefined> {
+    async insertComponent(data: { id: string, class: string }): Promise<ComponentType|undefined> {
         connector.preregister(data.id);
         const myImport = await mapComponent(data.class);
         if (myImport) {

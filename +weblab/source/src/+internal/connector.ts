@@ -1,13 +1,13 @@
 
 import debounce from "lodash/debounce"
-import Component from "./component"
+import type {ComponentType} from "./component"
 
 interface HTMLConnector {
     Data: any,
     addEventListener: Function;
 };
 let connector: HTMLConnector | undefined = undefined;
-let components: Array<Component> = [];
+let components: Array<ComponentType> = [];
 let preIds: Array<{ id: string, events: Array<{ name: string, data: any }> }> = [];
 let evtQueue: Array<{ id: string, name: string, data: any }> = [];
 
@@ -28,9 +28,9 @@ export default {
     },
     /**
      * Store the element with its ID
-     * @param {Component} element The component itself
+     * @param {ComponentType} element The component itself
      */
-    register(element: Component) {
+    register(element: ComponentType) {
         components.push(element);
         const idx = preIds.findIndex((e) => { return e.id === element.id });
         if (idx !== -1) {
