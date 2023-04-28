@@ -15,7 +15,7 @@ export default async function mapComponent(className: string): Promise<{ default
         case 'weblab.components.TagFilterTree':
             return await import('../+components/tagtree/index');
         case 'weblab.components.LinearProgress':
-            return await import('../+components/progress/index');
+            return await import('../+components/linear_progress/index');
         default:
             return;
     }
