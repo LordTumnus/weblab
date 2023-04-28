@@ -16173,7 +16173,7 @@ function create_fragment(ctx) {
 			t1 = text(/*value*/ ctx[1]);
 			t2 = text("%");
 			attr(span0, "class", "bar svelte-1u3d5fy");
-			set_style(span0, "--progress", /*value*/ ctx[1] - 100);
+			set_style(span0, "--progress", /*value*/ ctx[1] * 100 - 100);
 			toggle_class(span0, "indeterminate", /*indeterminate*/ ctx[0]);
 			toggle_class(span0, "value", !/*indeterminate*/ ctx[0]);
 			attr(span1, "class", span1_class_value = "root " + /*border_type*/ ctx[3] + "-border" + " svelte-1u3d5fy");
@@ -16192,7 +16192,7 @@ function create_fragment(ctx) {
 		},
 		p(ctx, [dirty]) {
 			if (dirty & /*value*/ 2) {
-				set_style(span0, "--progress", /*value*/ ctx[1] - 100);
+				set_style(span0, "--progress", /*value*/ ctx[1] * 100 - 100);
 			}
 
 			if (dirty & /*indeterminate*/ 1) {

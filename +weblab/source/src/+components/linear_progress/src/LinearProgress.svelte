@@ -11,7 +11,7 @@
       class="bar"
       class:indeterminate
       class:value={!indeterminate}
-      style="--progress: {value - 100};"
+      style="--progress: {value*100 - 100};"
     />
   </span>
 </div>
