@@ -2,7 +2,6 @@ classdef LinearProgress < weblab.internal.FrameComponent & ...
                   weblab.components.mixin.Styled
 
     properties (SetObservable, Description = "CanBeStained")
-        ProgressType
         Value
         Indeterminate
         ShowValue
@@ -14,9 +13,6 @@ classdef LinearProgress < weblab.internal.FrameComponent & ...
 
         function this = LinearProgress()
             % LINEARPROGRESS constructor
-            
-            % Force-set the type of the progressbar 
-            this.ProgressType = "linear";
         end
 
     end
