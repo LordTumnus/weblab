@@ -9,7 +9,6 @@ import some from "lodash/some";
 import forEach from "lodash/forEach";
 
 // Deepdash deps
-import { Path } from "deepdash-es/Path"
 import { filterDeep, mapValuesDeep } from 'deepdash-es/standalone'
 
 
@@ -34,7 +33,7 @@ export function filter_match_leaf(tree: any, match: string): any {
             return node.name.includes(match)
         },
         {
-            childrenPath: ['node', 'children'] as Path[],
+            childrenPath: ['node', 'children'],
             leavesOnly: true
         }
     );
@@ -56,7 +55,7 @@ export function filter_match_branch(tree: any, match: string): any {
             return node.children.length !== 0 && node.name.includes(match)
         },
         {
-            childrenPath: ['node', 'children'] as Path[],
+            childrenPath: ['node', 'children'],
             onTrue: { skipChildren: true },
         }
     );
@@ -76,7 +75,7 @@ export function filter_exclude_leaf(tree: any, match: string): any {
             return !node.name.includes(match)
         },
         {
-            childrenPath: ['node', 'children'] as Path[],
+            childrenPath: ['node', 'children'],
             leavesOnly: true
         }
     );
@@ -104,7 +103,7 @@ export function filter_exclude_branch(tree: any, match: string): any {
             }
         },
         {
-            childrenPath: ['node', 'children'] as Path[],
+            childrenPath: ['node', 'children'],
             onTrue: { skipChildren: false },
             onFalse: { skipChildren: true },
         }
