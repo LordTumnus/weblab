@@ -2,6 +2,11 @@ classdef LinearProgress < weblab.internal.FrameComponent & ...
         weblab.components.mixin.Styled
     
     properties (SetObservable, Description = "CanBeStained")
+        
+        % PROGRESSTYPE: Type of the progressbar. Might be linear or circular
+        ProgressType string ...
+            {mustBeMember(ProgressType, ["linear", "circular"])} = "linear";
+
         % VALUE: The displayed progress, expressed as a value between 0 and 1.
         % Does not have an effect if Indeterminate is set to true
         Value double {mustBeInRange(Value, 0, 1)} = 0;
@@ -16,10 +21,13 @@ classdef LinearProgress < weblab.internal.FrameComponent & ...
         
         % BORDERTYPE: Select a border style. Possible values are:
         % - unset (straight corners)
-        % - rounded (10% rounded corners)
         % - pill (pill-shaped corners)
         BorderType string ...
-            {mustBeMember(BorderType, ["unset", "rounded", "pill"])} = "unset";
+            {mustBeMember(BorderType, ["unset", "pill"])} = "unset";
+
+        % STROKEWIDTH: For circular progressbars, this value specifies the
+        % circles line-width, expressed as a percentage of the radius
+        StrokeWidth double {mustBeInRange(StrokeWidth, 0, 100)} = 10;
     end
         
 end
