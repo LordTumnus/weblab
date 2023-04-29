@@ -37,6 +37,15 @@ t.pstyle('& li:hover', 'color','red');
 
 >Note: If targeting the `:before` or `:after` pseudoselector, take into account that the values of the `contents` CSS property should be a double-string (i.e, `""the-content""`)
 
+## `cssvar`
+
+Same concept as `pstyle`, but instead of modifying a css attribute, it targets css properties (vars). CSS properties are case sensitive and *must* start with a double dash (`--`)
+
+```matlab
+t.cssvar('& li', '--my-background-color','blue');
+```
+
+
 
 ## Keyframes & Animations
 WIP
