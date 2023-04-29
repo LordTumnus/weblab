@@ -50,12 +50,15 @@
 <style>
   .progress__circular-root {
     flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: contents;
     transform: rotate(-90deg);
   }
-
+  .progress__circular-root > svg {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+  }
+  
   .progress__circular-track {
     fill: transparent;
     stroke: rgb(167, 202, 237);
