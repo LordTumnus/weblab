@@ -57,6 +57,9 @@ classdef Styled < handle
 
 
         function cssvar(this, tgt, name, value) 
+            % CSSVAR sets css properties (vars) to a pseudo element
+            % >> c.cssvar("& .my_class", "--color", "red");
+            % >> c.pstyle("& .my_class", "backgroundColor", "var(--color)")
             arguments
                 this
                 tgt (1,1) string
