@@ -44,9 +44,9 @@ These components are currently supported:
 - Tree: [docs](/docs/components/Tree.md) / [src](/%2Bweblab/%2Bcomponents/Tree.m)
 - TagBar: [docs](/docs/components/TagBar.md) / [src](/%2Bweblab/%2Bcomponents/TagBar.m)
 - TagFilterTree: [docs](/docs/components/TagFilterTree.md) / [src](/%2Bweblab/%2Bcomponents/TagFilterTree.m)
+- Progress: [docs](/docs/components/Porgress.md) / [src](/%2Bweblab/%2Bcomponents/Progress.m)
 
 More to come! These are the next planned components:
-- ProgressBar
 - Code Editor
 - PDF renderer
 - Interactive plots
