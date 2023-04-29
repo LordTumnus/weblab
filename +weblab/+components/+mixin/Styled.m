@@ -54,5 +54,27 @@ classdef Styled < handle
             % post-set event
             this.CSSStyle = this.CSSStyle;
         end
+
+
+        function cssvar(this, tgt, name, value) 
+            arguments
+                this
+                tgt (1,1) string
+            end
+            arguments (Repeating)
+                name string {mustBeCSSVar}
+                value string
+            end
+
+            rule = this.CSSStyle.addRule(tgt);
+            cellfun(@(x,y) rule.set(x,y), name, value);
+            % [REQUIRED]: Re-assign the style property so that it triggers a
+            % post-set event
+            this.CSSStyle = this.CSSStyle;
+        end
     end
+end
+
+function mustBeCSSVar(name)
+    assert(startsWith(name, "--"));
 end
