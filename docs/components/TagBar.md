@@ -30,6 +30,39 @@
 
 ## [Styling](../styling.md) 
 
+| Selector  	| Description   	|
+|:-:	|---	|
+| `&`   | Root of the search bar. Use it to change default fonts and colors|
+| `.tagify`   | Element containing the tags|
+| `.tagify__tag`   | Tags|
+
+> **Important**: Targeting tag attributes, like their background color, is not straightforward. Instead, you should probably target the css properties defined in the tagify element (see [Tagifys documentation](https://github.com/yairEO/tagify#css-variables)) 
+
+
+## Example
+
+Creation
+```matlab
+% Create tagbar
+t = weblab.components.TagBar();
+t.Tags = ["hello","world"]; % Add tags
+t.Placeholder = "Write sth"; % Change placeholder
+t.TagsChangedFcn = @(~,e) disp(string(e.Data));
+
+% Insert it into a frame
+f = weblab.internal.Frame();
+f.insert(t);
+````
+
+Styling
+
+```matlab
+% Change the background color of the tags to red
+t.cssvar("& .tagify", "--tag-bg", "red");
+t.cssvar("& .tagify", "--placeholder-color-focus", "green");
+
+```
+
 
 ## Credits
 
