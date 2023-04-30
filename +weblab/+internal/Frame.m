@@ -89,18 +89,18 @@ classdef Frame < matlab.ui.componentcontainer.ComponentContainer & ...
             % frame components tree whose id matches the event source, and let
             % that node handle the event
 
-            for event = viewEvents
+            for eventIdx = 1:numel(viewEvents)
                 % If the source is the same frame element, handle the event
-                if this.ID == event.id
-                    this.handleViewEvent(event);
+                if this.ID == viewEvents(eventIdx).id
+                    this.handleViewEvent(viewEvents(eventIdx));
                     return;
                 end
 
                 % Find the descendant with the matching source and let it handle the
                 % event. If no match, don't do anything
-                src = this.findComponent(event.id);
+                src = this.findComponent(viewEvents(eventIdx).id);
                 if ~isempty(src)
-                    src.handleViewEvent(event);
+                    src.handleViewEvent(viewEvents(eventIdx));
                 end
             end
 

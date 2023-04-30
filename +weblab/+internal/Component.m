@@ -35,8 +35,12 @@ classdef (Abstract) Component < handle & dynamicprops
             % COMPONENT constructor
 
             % Default-initialize the subscriptions and property maps
-            this.DirtyProperties = containers.Map();
-            this.Subscriptions = containers.Map();
+            if isempty(this.DirtyProperties) || this.DirtyProperties.Count == 0
+                this.DirtyProperties = containers.Map();
+            end
+            if isempty(this.Subscriptions) || this.Subscriptions.Count == 0
+                this.Subscriptions = containers.Map();
+            end
 
             mc = meta.class.fromName(class(this));
             % Get all the properties that will cause a view change when they are

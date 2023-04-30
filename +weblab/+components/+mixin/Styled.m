@@ -2,7 +2,7 @@
 classdef Styled < handle
 
     properties (SetObservable, Description = "CanBeStained", ...
-                SetAccess = private, Hidden)
+                SetAccess = public, Hidden)
         % STYLE: Hidden style object that holds the css attributes of the target
         % component and any pseudo selected ones
         CSSStyle weblab.style.CSSStyle
@@ -11,7 +11,8 @@ classdef Styled < handle
     methods 
         function this = Styled()
             % STYLABLE constructor. Initialize the style
-            this.CSSStyle = weblab.style.CSSStyle();
+            this.changePropertiesWithoutNotifyingView(...
+                "CSSStyle", weblab.style.CSSStyle()); %#ok<MCNPN> 
         end
 
 
