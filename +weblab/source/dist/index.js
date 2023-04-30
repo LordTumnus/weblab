@@ -15460,6 +15460,7 @@ _Tree_tree_view = new WeakMap(), _Tree_branch_template = new WeakMap(), _Tree_le
     this.appendChild(__classPrivateFieldGet(this, _Tree_tree_view, "f"));
     __classPrivateFieldSet(this, _Tree_branch_template, document.createElement("li"), "f");
     __classPrivateFieldGet(this, _Tree_branch_template, "f").id = "branch_template";
+    __classPrivateFieldGet(this, _Tree_branch_template, "f").classList.add("treeview__branch");
     let branch_node = document.createElement("div");
     branch_node.classList.add("treeview__node", "treeview__node--clickable");
     let branch_icon = document.createElement("i");
@@ -15471,6 +15472,7 @@ _Tree_tree_view = new WeakMap(), _Tree_branch_template = new WeakMap(), _Tree_le
     __classPrivateFieldGet(this, _Tree_branch_template, "f").appendChild(branch_node);
     __classPrivateFieldSet(this, _Tree_leaf_template, document.createElement("li"), "f");
     __classPrivateFieldGet(this, _Tree_leaf_template, "f").id = "leaf_template";
+    __classPrivateFieldGet(this, _Tree_leaf_template, "f").classList.add("treeview__leaf");
     let leaf_node = document.createElement("div");
     leaf_node.classList.add("treeview__node");
     let leaf_icon = document.createElement("i");

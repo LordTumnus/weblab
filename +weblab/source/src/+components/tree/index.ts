@@ -54,6 +54,7 @@ export default class Tree extends Component {
 
         this.#branch_template = document.createElement("li");
         this.#branch_template.id = "branch_template";
+        this.#branch_template.classList.add("treeview__branch")
         let branch_node = document.createElement("div");
         branch_node.classList.add("treeview__node", "treeview__node--clickable");
         let branch_icon = document.createElement("i");
@@ -66,6 +67,7 @@ export default class Tree extends Component {
 
         this.#leaf_template = document.createElement("li");
         this.#leaf_template.id = "leaf_template";
+        this.#leaf_template.classList.add("treeview__leaf")
         let leaf_node = document.createElement("div");
         leaf_node.classList.add("treeview__node");
         let leaf_icon = document.createElement("i");
