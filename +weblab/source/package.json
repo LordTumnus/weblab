@@ -26,12 +26,15 @@
     "tslib": "^2.5.0"
   },
   "dependencies": {
+    "@codemirror/language": "^6.6.0",
+    "@codemirror/legacy-modes": "^6.3.2",
     "@fortawesome/fontawesome-svg-core": "^6.4.0",
     "@fortawesome/free-regular-svg-icons": "^6.4.0",
     "@fortawesome/free-solid-svg-icons": "^6.4.0",
     "@yaireo/tagify": "^4.17.8",
     "cssobj": "^1.3.6",
     "deepdash-es": "^5.3.9",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "svelte-codemirror-editor": "^1.1.0"
   }
 }

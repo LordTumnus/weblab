@@ -16,6 +16,8 @@ export default async function mapComponent(className: string): Promise<{ default
             return await import('../+components/tagtree/index');
         case 'weblab.components.Progress':
             return await import('../+components/progress/index');
+        case 'weblab.components.CodeEditor':
+            return await import('../+components/codeeditor/index');
         default:
             return;
     }
