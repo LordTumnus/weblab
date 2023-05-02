@@ -1,0 +1,10 @@
+weblab-editor {
+    position: relative;
+    overflow: hidden;
+}
+.codemirror-wrapper{
+    height: 100%;
+}
+.codemirror-wrapper > .cm-editor {
+    height: 100%;
+}
