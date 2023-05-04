@@ -56,6 +56,9 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
                 this (1,1) weblab.components.CodeEditor
                 cursorPosition (1,1) {mustBeCursorPosition}
             end
+            if isnumeric(cursorPosition)
+                cursorPosition = cursorPosition - 1;
+            end
             this.publish(weblab.event.Event("move_cursor", cursorPosition));
         end
     end
@@ -70,6 +73,6 @@ function mustBeCursorPosition(position)
 % - An integer number greater than 0 (start = 1)
 % - One of the following: "start", "end", "current"
 
-assert((isinteger(position) && position > 0 ) || ...
-    any(strcmp(position, ["start","end","current"])));
+assert(any(strcmp(position, ["start","end","current"])) || ...
+    (round(position) == position && position > 0 ));
 end
