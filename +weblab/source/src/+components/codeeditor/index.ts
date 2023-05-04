@@ -5,8 +5,6 @@ import type { EditorView } from "@codemirror/view";
 //@ts-ignore
 import SvelteCodeEditor from './src/CodeEditor.svelte';
 
-
-
 class CodeEditor extends svelteComponent(SvelteCodeEditor) {
     constructor() {
         super();
