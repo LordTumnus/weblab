@@ -5,11 +5,14 @@ weblab-tagtree {
   justify-content: center;
   overflow: hidden;
   row-gap: 5px;
+  position: relative;
 }
 
 weblab-tagtree > .tagbar {
+  min-height: 3em;
   height: 3em;
   padding: 0;
+  overflow: hidden;
 }
 
 weblab-tagtree > .tagbar .tagify {
