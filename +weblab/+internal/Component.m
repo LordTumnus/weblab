@@ -236,10 +236,14 @@ classdef (Abstract) Component < handle & dynamicprops
             % ~ The data coming from the view is wrapped in a Matlab
             % event.EventData
             wrappedData = weblab.event.fromJS.DataEvent(data);
-            feval(this.(property), this, wrappedData)
 
             % Notify the event was triggered
             this.notify(event, wrappedData);
+
+            % Evaluate the linked function
+            feval(this.(property), this, wrappedData)
+
+            
         end
     end
 
