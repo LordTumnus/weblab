@@ -51,7 +51,6 @@
   .progress__circular-root {
     flex-grow: 1;
     display: contents;
-    transform: rotate(-90deg);
   }
   .progress__circular-root > svg {
     height: 100%;
@@ -64,6 +63,8 @@
     stroke: rgb(167, 202, 237);
   }
   .progress__circular-bar {
+    transform-origin: center;
+    transform: rotate(-90deg);
     fill: transparent;
     stroke: #1976d2;
     stroke-dasharray: var(--arcLength);
