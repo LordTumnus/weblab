@@ -58,7 +58,7 @@ classdef Container < handle
         function markAsClean(this)
             % MARKASCLEAN reinitializes the properties of the container and all 
             % of its component children after a graphic update
-            this.clearComponent(); %#ok<MCNPN> 
+            this.clearComponent(); %#ok<MCNPN>
             arrayfun(@(x) markAsClean(x), this.Components);
         end
     end
@@ -67,15 +67,17 @@ classdef Container < handle
                        ?weblab.internal.Container})
 
         function sendEventToView(this, ev)
-            % SENDEVENTTOVIEW wraps a child event and passes it to the next 
+            % SENDEVENTTOVIEW wraps a child event and passes it to the next
             % container, up until the frame
-            this.publish(weblab.event.Event("wb__childevent", ev));
+            if ~isempty(ev)
+                this.publish(weblab.event.Event("wb__childevent", ev));
+            end
         end
 
     end
 
     methods (Access = ?weblab.internal.Frame)
-        
+
         function c = findComponent(this, componentID)
             % FINDCOMPONENT looks for a descendant whose ID matches the
             % specified one
