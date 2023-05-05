@@ -1,10 +1,3 @@
-% *********************************************************************** %
-% Name        : 
-% Author      : Antonio Hortal <a.hortalsegura@gmail.com>
-% Description : 
-%
-%
-% *********************************************************************** %
 
 classdef KeyFrame < handle
     properties
