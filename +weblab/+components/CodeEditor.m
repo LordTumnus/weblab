@@ -61,6 +61,10 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
             end
             this.publish(weblab.event.Event("move_cursor", cursorPosition));
         end
+
+        function promise = fetchCursorPosition(this)
+            promise = this.fetch("cursor_position").then(@(x) x+1);
+        end
     end
 
 

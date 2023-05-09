@@ -24,6 +24,11 @@ class CodeEditor extends svelteComponent(SvelteCodeEditor) {
             v.dispatch({ selection: { head: n, anchor: n } });
         })
     }
+
+    get cursor_position(){
+        const v: EditorView = this._element._view;
+        return v.state.selection.main.head;
+    }
 };
 export default CodeEditor;
 

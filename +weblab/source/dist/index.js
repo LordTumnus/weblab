@@ -58129,6 +58129,10 @@ class CodeEditor extends svelteComponent(CodeEditor$1) {
             v.dispatch({ selection: { head: n, anchor: n } });
         });
     }
+    get cursor_position() {
+        const v = this._element._view;
+        return v.state.selection.main.head;
+    }
 }
 customElements.define("weblab-editor", CodeEditor);
 function mapCursorPosition(data, v) {
