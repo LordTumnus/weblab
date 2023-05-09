@@ -1783,7 +1783,15 @@ function componentMixin(A) {
              * @type {{[key: string]: Function}}
              */
             this.subscriptions = {};
-            this.subscribe("wb__dirty_prop", (data) => { this.setDirtyProperty(data); });
+            this.subscribe("wb__dirty_prop", (data) => {
+                this.setDirtyProperty(data);
+            });
+            this.subscribe("wb__fetch", (data) => {
+                this.publish("wb__fetch", {
+                    id: data.id,
+                    value: this.getProperty(data.name),
+                });
+            });
             // CSSObj 
             const randCSSId = (Math.random() + 1).toString(36).substring(6);
             this.cssClassName = `styleable_${randCSSId}`;
@@ -1812,6 +1820,16 @@ function componentMixin(A) {
          */
         setDirtyProperty(prop) {
             this[prop.name] = prop.value;
+        }
+        /**
+         * Get a property by name
+         * @param name the name of the property
+         * @returns the value if the class has at least a getter for the
+         * property name, and otherwise null
+         */
+        getProperty(name) {
+            return Object.getPrototypeOf(this).hasOwnProperty(name) ?
+                this[name] : null;
         }
         /**
          * Upon receiving an event, checks if the component is subscribed to it and, if it is,
@@ -16258,6 +16276,20 @@ function svelteComponent(SvelteElement) {
                 return;
             }
             this[prop.name] = prop.value;
+        }
+        /**
+         * Overload getProperty
+         */
+        getProperty(name) {
+            if (Object.getPrototypeOf(this._element).hasOwnProperty(name)) {
+                return this._element[name];
+            }
+            else if (Object.getPrototypeOf(this).hasOwnProperty(name)) {
+                return this[name];
+            }
+            else {
+                return null;
+            }
         }
     };
 }

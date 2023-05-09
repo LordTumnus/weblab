@@ -28,6 +28,19 @@ export default function svelteComponent(SvelteElement: typeof SvelteComponentDev
             this[prop.name] = prop.value;
         }
 
+        /**
+         * Overload getProperty
+         */
+         getProperty(name: string) {
+            if (Object.getPrototypeOf(this._element).hasOwnProperty(name)) {
+                return this._element[name];
+            } else if (Object.getPrototypeOf(this).hasOwnProperty(name)) {
+                return this[name];
+            } else {
+                return null;
+            }
+        }
+
 
     }
 }

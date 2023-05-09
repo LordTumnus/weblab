@@ -27,6 +27,9 @@ classdef (Abstract) Component < handle & dynamicprops
         % EVENTQUEUE: List of events that are not be published until the
         % component is attached to a frame
         EventQueue weblab.event.Event
+
+        % UNFULLFILLEDPROMISES: List of promises that have yet to be fullfilled
+        UnfullfilledPromises weblab.internal.Promise
     end
 
 
@@ -71,6 +74,9 @@ classdef (Abstract) Component < handle & dynamicprops
                     @(data) this.linkEventToProperty(p.Name, evt, data));
             end
 
+            % Subscribe to fetching events
+            this.subscribe("wb__fetch", ...
+                @(data) this.resolvePromise(data.id, data.value));
         end
     end
 
@@ -120,6 +126,22 @@ classdef (Abstract) Component < handle & dynamicprops
             end
             % Remove the event entry from the subscriptions
             this.Subscriptions.remove(eventName);
+        end
+
+        function promise = fetch(this, name)
+            % FETCH queries a property from the view and returns a promise that
+            % will be fullfilled when the view sends its value to matlab
+            arguments 
+                this weblab.internal.Component
+                name (1,1) string
+            end
+            % Create the promise and add it to the unfullfilled list
+            promise = weblab.internal.Promise();
+            this.UnfullfilledPromises(end + 1) = promise;
+            % Send an event to the view with the property name and the
+            % identifier of the promise
+            data = struct("name", name, "id", promise.ID);
+            this.publish(weblab.event.Event("wb__fetch", data));
         end
     end
 
@@ -242,8 +264,14 @@ classdef (Abstract) Component < handle & dynamicprops
 
             % Evaluate the linked function
             feval(this.(property), this, wrappedData)
+        end
 
-            
+        function resolvePromise(this, id, value)
+            % RESOLVEPROMISE resolves the stored promise with the matching ID
+            % to the specified value
+            idx = [this.UnfullfilledPromises.ID] == id;
+            this.UnfullfilledPromises(idx).resolve(value);
+            this.UnfullfilledPromises(idx) = [];
         end
     end
 

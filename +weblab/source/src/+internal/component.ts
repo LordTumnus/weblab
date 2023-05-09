@@ -10,7 +10,7 @@ export default Component;
 
 export type ComponentType = InstanceType<typeof Component>;
 
-export function componentMixin<T extends new (...args:any[]) => HTMLElement>(A: T) {
+export function componentMixin<T extends new (...args: any[]) => HTMLElement>(A: T) {
     class MyComponent extends A {
 
         /**
@@ -35,7 +35,16 @@ export function componentMixin<T extends new (...args:any[]) => HTMLElement>(A: 
 
         constructor(...args: any[]) {
             super(...args);
-            this.subscribe("wb__dirty_prop", (data: any) => { this.setDirtyProperty(data) });
+            this.subscribe("wb__dirty_prop", (data: any) => {
+                this.setDirtyProperty(data)
+            });
+
+            this.subscribe("wb__fetch", (data: { name: string, id: string }) => {
+                this.publish("wb__fetch", {
+                    id: data.id,
+                    value: this.getProperty(data.name),
+                })
+            })
 
             // CSSObj 
             const randCSSId = (Math.random() + 1).toString(36).substring(6);
@@ -68,6 +77,17 @@ export function componentMixin<T extends new (...args:any[]) => HTMLElement>(A: 
          */
         setDirtyProperty(prop: { name: string, value: any }) {
             this[prop.name] = prop.value;
+        }
+
+        /**
+         * Get a property by name
+         * @param name the name of the property
+         * @returns the value if the class has at least a getter for the 
+         * property name, and otherwise null
+         */
+        getProperty(name: string) {
+            return Object.getPrototypeOf(this).hasOwnProperty(name) ?
+                this[name] : null;
         }
 
         /**
