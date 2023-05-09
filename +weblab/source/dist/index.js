@@ -15990,6 +15990,9 @@ function schedule_update() {
 function add_render_callback(fn) {
     render_callbacks.push(fn);
 }
+function add_flush_callback(fn) {
+    flush_callbacks.push(fn);
+}
 // flush() calls callbacks in this order:
 // 1. All beforeUpdate callbacks, in order: parents before children
 // 2. All bind:this callbacks, in reverse order: children before parents.
@@ -16118,6 +16121,14 @@ function transition_out(block, local, detach, callback) {
     }
     else if (callback) {
         callback();
+    }
+}
+
+function bind(component, name, callback) {
+    const index = component.$$.props[name];
+    if (index !== undefined) {
+        component.$$.bound[index] = callback;
+        callback(component.$$.ctx[index]);
     }
 }
 function create_component(block) {
@@ -57935,20 +57946,28 @@ const matlab = {
 
 function create_fragment(ctx) {
 	let codemirror;
+	let updating_value;
 	let current;
 
-	codemirror = new CodeMirror({
-			props: {
-				extensions: /*extensions*/ ctx[4],
-				tabSize: 4,
-				theme: /*theme*/ ctx[0] === "dark" ? darkTheme : lightTheme$1,
-				value: /*value*/ ctx[1],
-				editable: /*editable*/ ctx[2],
-				lineWrapping: /*wrap_lines*/ ctx[3]
-			}
-		});
+	function codemirror_value_binding(value) {
+		/*codemirror_value_binding*/ ctx[6](value);
+	}
 
-	codemirror.$on("change", /*change_handler*/ ctx[6]);
+	let codemirror_props = {
+		extensions: /*extensions*/ ctx[4],
+		tabSize: 4,
+		theme: /*theme*/ ctx[1] === "dark" ? darkTheme : lightTheme$1,
+		editable: /*editable*/ ctx[2],
+		lineWrapping: /*wrap_lines*/ ctx[3]
+	};
+
+	if (/*value*/ ctx[0] !== void 0) {
+		codemirror_props.value = /*value*/ ctx[0];
+	}
+
+	codemirror = new CodeMirror({ props: codemirror_props });
+	binding_callbacks.push(() => bind(codemirror, 'value', codemirror_value_binding));
+	codemirror.$on("change", /*change_handler*/ ctx[7]);
 
 	return {
 		c() {
@@ -57960,10 +57979,16 @@ function create_fragment(ctx) {
 		},
 		p(ctx, [dirty]) {
 			const codemirror_changes = {};
-			if (dirty & /*theme*/ 1) codemirror_changes.theme = /*theme*/ ctx[0] === "dark" ? darkTheme : lightTheme$1;
-			if (dirty & /*value*/ 2) codemirror_changes.value = /*value*/ ctx[1];
+			if (dirty & /*theme*/ 2) codemirror_changes.theme = /*theme*/ ctx[1] === "dark" ? darkTheme : lightTheme$1;
 			if (dirty & /*editable*/ 4) codemirror_changes.editable = /*editable*/ ctx[2];
 			if (dirty & /*wrap_lines*/ 8) codemirror_changes.lineWrapping = /*wrap_lines*/ ctx[3];
+
+			if (!updating_value && dirty & /*value*/ 1) {
+				updating_value = true;
+				codemirror_changes.value = /*value*/ ctx[0];
+				add_flush_callback(() => updating_value = false);
+			}
+
 			codemirror.$set(codemirror_changes);
 		},
 		i(local) {
@@ -57997,19 +58022,33 @@ function instance($$self, $$props, $$invalidate) {
 		})
 	];
 
+	function codemirror_value_binding(value$1) {
+		value = value$1;
+		$$invalidate(0, value);
+	}
+
 	function change_handler(event) {
 		bubble.call(this, $$self, event);
 	}
 
 	$$self.$$set = $$props => {
-		if ('theme' in $$props) $$invalidate(0, theme = $$props.theme);
-		if ('value' in $$props) $$invalidate(1, value = $$props.value);
+		if ('theme' in $$props) $$invalidate(1, theme = $$props.theme);
+		if ('value' in $$props) $$invalidate(0, value = $$props.value);
 		if ('editable' in $$props) $$invalidate(2, editable = $$props.editable);
 		if ('wrap_lines' in $$props) $$invalidate(3, wrap_lines = $$props.wrap_lines);
 		if ('_view' in $$props) $$invalidate(5, _view = $$props._view);
 	};
 
-	return [theme, value, editable, wrap_lines, extensions, _view, change_handler];
+	return [
+		value,
+		theme,
+		editable,
+		wrap_lines,
+		extensions,
+		_view,
+		codemirror_value_binding,
+		change_handler
+	];
 }
 
 let CodeEditor$1 = class CodeEditor extends SvelteComponent {
@@ -58017,8 +58056,8 @@ let CodeEditor$1 = class CodeEditor extends SvelteComponent {
 		super();
 
 		init(this, options, instance, create_fragment, safe_not_equal, {
-			theme: 0,
-			value: 1,
+			theme: 1,
+			value: 0,
 			editable: 2,
 			wrap_lines: 3,
 			_view: 5
@@ -58026,7 +58065,7 @@ let CodeEditor$1 = class CodeEditor extends SvelteComponent {
 	}
 
 	get theme() {
-		return this.$$.ctx[0];
+		return this.$$.ctx[1];
 	}
 
 	set theme(theme) {
@@ -58035,7 +58074,7 @@ let CodeEditor$1 = class CodeEditor extends SvelteComponent {
 	}
 
 	get value() {
-		return this.$$.ctx[1];
+		return this.$$.ctx[0];
 	}
 
 	set value(value) {

@@ -1,7 +1,6 @@
 import { componentMixin } from '../../component'
 import { SvelteComponentDev } from 'svelte/internal'
 
-
 export default function svelteComponent(SvelteElement: typeof SvelteComponentDev) {
     return class extends componentMixin(HTMLElement) {
         _element: SvelteComponentDev;

@@ -29,7 +29,7 @@
   {extensions}
   tabSize={4}
   theme={theme === "dark" ? darkTheme : lightTheme}
-  {value}
+  bind:value
   {editable}
   lineWrapping={wrap_lines}
   on:change

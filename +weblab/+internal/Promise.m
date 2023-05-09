@@ -128,11 +128,11 @@ function nop()
 end
 
 function out = evaluateCallback(cb, value)
-
-n{:} = feval(cb, value);
-if numel(n) == 0
+nOut = nargout(cb);
+if nOut >= 1
+    out = feval(cb, value);
+else
+    feval(cb, value);
     out = [];
-    return;
 end
-out = n{1};
 end
