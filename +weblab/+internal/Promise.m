@@ -129,10 +129,10 @@ end
 
 function out = evaluateCallback(cb, value)
 nOut = nargout(cb);
-if nOut >= 1
-    out = feval(cb, value);
+[out{1:nOut}] = feval(cb, value);
+if isempty(out) 
+    out = value;
 else
-    feval(cb, value);
-    out = [];
+    out = out{1};
 end
 end
