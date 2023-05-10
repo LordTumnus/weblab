@@ -32,37 +32,22 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
                 @(~,e) this.changePropertiesWithoutNotifyingView("Value", e.Data));
         end
 
-        function insertTextAtOffset(this, text, cursorOffset)
-            % INSERTTEXT writes the input text into the editor at the specified
-            % cursor offset. If no position is specified, the text is appended
-            % at the current cursor position
+        function insertText(this, text)
+            % INSERTTEXT writes the input text into the editor at the current
+            % cursor offset. The cursor will also be moved to the end of the
+            % text
             arguments
                 this (1,1) weblab.components.CodeEditor
                 text (1,1) string
-                cursorOffset (1,1) {mustBeCursorOffset} = "current";
             end
-
-            % Numbers in js start from 0
-            if isnumeric(cursorOffset)
-                cursorOffset = cursorOffset - 1;
-            end
-            data = struct("text", text, "pos", cursorOffset);
-            this.publish(weblab.event.Event("insert_text_offset", data));
+            this.publish(weblab.event.Event("insert_text", text));
         end
 
-        function insertTextAtPosition(this, text, cursorPosition)
-            % INSERTTEXT writes the input text into the editor at the specified
-            % cursor position (see MOVECURSORPOSITION for details on how the
-            % position is specified)
-            arguments
-                this (1,1) weblab.components.CodeEditor
-                text (1,1) string
-                cursorPosition (1,2) {mustBeLineAndNumber}
-            end
-
-            cursorPosition(2) = cursorPosition(2) - 1;
-            data = struct("text", text, "pos", cursorPosition);
-            this.publish(weblab.event.Event("insert_text_position", data));
+        function replaceSelection(this, text)
+            % REPLACESELECTION changes the text under the current selection by
+            % the new one. If there is nothing selected, the text is inserted at 
+            % cursor just like INSERTTEXT
+            this.publish(weblab.event.Event("replace_text", text));
         end
 
         function moveCursorToOffset(this, cursorOffset) 
@@ -95,6 +80,39 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
                 weblab.event.Event("move_cursor_position", cursorPosition));
         end
 
+        function selectFromOffset(this, from, to)
+            % SELECTFROMOFFSET selects the text contained within the offsets
+            % specified by "from" and "to"
+            arguments
+                this (1,1) weblab.components.CodeEditor
+                from (1,1) {mustBeCursorOffset}
+                to (1,1) {mustBeCursorOffset}
+            end
+            % JS offsets start from 0
+            if isnumeric(from)
+                from = from - 1;
+            end
+            if isnumeric(to)
+                to = to - 1;
+            end
+            this.publish(...
+                weblab.event.Event("select_offset", struct("from",from,"to",to)));
+        end
+
+        function selectFromPosition(this, from, to)
+            % SELECTFROMPOSITION selects the text contained within the positions
+            % specified by "from" and "to" (given as [line, char] pairs)
+            arguments
+                this (1,1) weblab.components.CodeEditor
+                from (1,2) {mustBeLineAndNumber}
+                to (1,2) {mustBeLineAndNumber}
+            end
+            from(2) = from(2) - 1;
+            to(2) = to(2) - 1;
+            this.publish(...
+                weblab.event.Event("select_position", struct("from",from,"to",to)));
+        end
+
         function promise = fetchCursorOffset(this)
             % FETCHCURSOROFFSET returns a promise that resolves into the
             % current cursor offset
@@ -105,6 +123,33 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
             % FETCHCURSORPOSITION returns a promise that resolves into the
             % current cursor position
             promise = this.fetch("cursor_position").then(@(x) [x(1) x(2)+1]);
+        end
+
+        function promise = fetchValue(this)
+            % FETCHVALUE returns a promise that resolves into the
+            % current value of the editor. 
+            % Note: The Value property is updated at a minimum rate of 500ms 
+            % (it is debounced at that rate), so the outputs of Value and
+            % fetchValue might be different.
+            % For example
+            % >> editor = weblab.components.CodeEditor();
+            % >> editor.insertText("Hello world")
+            % >> v_prop = editor.Value; % "";
+            % >> v_fetch = editor.fetchValue().wait().Value; % "Hello world"
+            promise = this.fetch("value").then(@(x) string(x));
+        end
+
+
+
+        function focus(this, tf)
+            % FOCUS sets or removes the focus from the editor. 
+            % Note: The cursor is not visible when the editor is not focused.
+            % This method is usefull to show the cursor
+            arguments
+                this (1,1) weblab.components.CodeEditor
+                tf (1,1) logical = true;
+            end
+            this.publish(weblab.event.Event("focus", tf));
         end
     end
 

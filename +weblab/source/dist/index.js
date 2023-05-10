@@ -57584,7 +57584,7 @@ var darkTheme = [
 ];
 
 // Using https://github.com/PrismJS/prism-themes/blob/master/themes/prism-vsc-dark-plus.css as reference for the colors
-const foreground = '#000000', background = '#ffffff', darkBackground = '#000000', highlightBackground = '#E5FADD', cursor = '#000000', selection = '#2A55A1', tooltipBackground = '#ffffff', invalid = '#ff0000', keyword = '#0E00FF', controlFlowAndModuleKeywords = '#c586c0', functions = '#dcdcaa', typesAndClasses = '#4ec9b0', tagNames = '#569cd6', operators = '#000000', regexes = '#d16969', strings = '#A709F5', names = '#000000', punctuationAndSeparators = '#000000', angleBrackets = '#808080', templateStringBraces = '#569cd6', propertyNames = '#9cdcfe', booleansAndAtoms = '#569cd6', numbersAndUnits = '#000000', metaAndComments = '#008013';
+const foreground = '#000000', background = '#ffffff', darkBackground = '#000000', highlightBackground = '#E5FADD66', cursor = '#000000', selection = '#2A55A1', tooltipBackground = '#ffffff', invalid = '#ff0000', keyword = '#0E00FF', controlFlowAndModuleKeywords = '#c586c0', functions = '#dcdcaa', typesAndClasses = '#4ec9b0', tagNames = '#569cd6', operators = '#000000', regexes = '#d16969', strings = '#A709F5', names = '#000000', punctuationAndSeparators = '#000000', angleBrackets = '#808080', templateStringBraces = '#569cd6', propertyNames = '#9cdcfe', booleansAndAtoms = '#569cd6', numbersAndUnits = '#000000', metaAndComments = '#008013';
 const lightThemeStyle = EditorView.theme({
     '&': {
         color: foreground,
@@ -58116,28 +58116,17 @@ class CodeEditor extends svelteComponent(CodeEditor$1) {
         this._element.$on("change", (ev) => {
             this.publish("value_changed", ev.detail);
         });
-        this.subscribe("insert_text_offset", (data) => {
+        this.subscribe("insert_text", (data) => {
             let v = this._element._view;
-            const idx = mapCursorOffset(data.pos, v);
+            const idx = v.state.selection.main.head;
             v.dispatch({
-                changes: { from: idx, insert: data.text }
+                changes: { from: idx, insert: data },
+                selection: { anchor: idx + data.length }
             });
         });
-        this.subscribe("insert_text_position", (data) => {
+        this.subscribe("replace_text", (data) => {
             let v = this._element._view;
-            v.state.doc.length;
-            const lines = v.state.doc.lines;
-            if (data.pos[0] > lines) {
-                data.pos[0] = lines;
-            }
-            const lineLength = v.state.doc.line(data.pos[0]).length;
-            if (data.pos[1] > lineLength) {
-                data.pos[1] = lineLength;
-            }
-            let n = v.state.doc.line(data.pos[0]).from + data.pos[1];
-            v.dispatch({
-                changes: { from: n, insert: data.text }
-            });
+            v.dispatch(v.state.replaceSelection(data));
         });
         this.subscribe("move_cursor_offset", (data) => {
             let v = this._element._view;
@@ -58146,17 +58135,24 @@ class CodeEditor extends svelteComponent(CodeEditor$1) {
         });
         this.subscribe("move_cursor_position", (data) => {
             let v = this._element._view;
-            v.state.doc.length;
-            const lines = v.state.doc.lines;
-            if (data[0] > lines) {
-                data[0] = lines;
-            }
-            const lineLength = v.state.doc.line(data[0]).length;
-            if (data[1] > lineLength) {
-                data[1] = lineLength;
-            }
-            let n = v.state.doc.line(data[0]).from + data[1];
+            let n = position2offset(data, v);
             v.dispatch({ selection: { head: n, anchor: n } });
+        });
+        this.subscribe("select_offset", (data) => {
+            let v = this._element._view;
+            const f = mapCursorOffset(data.from, v);
+            const t = mapCursorOffset(data.to, v);
+            v.dispatch({ selection: { anchor: f, head: t } });
+        });
+        this.subscribe("select_position", (data) => {
+            let v = this._element._view;
+            const f = position2offset(data.from, v);
+            const t = position2offset(data.to, v);
+            v.dispatch({ selection: { anchor: f, head: t } });
+        });
+        this.subscribe("focus", (data) => {
+            let v = this._element._view;
+            data ? v.focus() : v.contentDOM.blur();
         });
     }
     get cursor_offset() {
@@ -58184,6 +58180,18 @@ function mapCursorOffset(data, v) {
         case "current":
             return v.state.selection.main.head;
     }
+}
+function position2offset(pos, v) {
+    v.state.doc.length;
+    const lines = v.state.doc.lines;
+    if (pos[0] > lines) {
+        pos[0] = lines;
+    }
+    const lineLength = v.state.doc.line(pos[0]).length;
+    if (pos[1] > lineLength) {
+        pos[1] = lineLength;
+    }
+    return v.state.doc.line(pos[0]).from + pos[1];
 }
 
 var index = /*#__PURE__*/Object.freeze({
