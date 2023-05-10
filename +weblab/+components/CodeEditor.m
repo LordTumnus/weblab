@@ -32,38 +32,79 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
                 @(~,e) this.changePropertiesWithoutNotifyingView("Value", e.Data));
         end
 
-        function insertText(this, text, cursorPosition)
+        function insertTextAtOffset(this, text, cursorOffset)
             % INSERTTEXT writes the input text into the editor at the specified
-            % cursor position. If no position is specified, the text is appended
+            % cursor offset. If no position is specified, the text is appended
             % at the current cursor position
             arguments
                 this (1,1) weblab.components.CodeEditor
                 text (1,1) string
-                cursorPosition (1,1) {mustBeCursorPosition} = "current";
+                cursorOffset (1,1) {mustBeCursorOffset} = "current";
             end
 
             % Numbers in js start from 0
-            if isnumeric(cursorPosition)
-                cursorPosition = cursorPosition - 1;
+            if isnumeric(cursorOffset)
+                cursorOffset = cursorOffset - 1;
             end
-            data = struct("text", text, "pos", cursorPosition);
-            this.publish(weblab.event.Event("insert_text", data));
+            data = struct("text", text, "pos", cursorOffset);
+            this.publish(weblab.event.Event("insert_text_offset", data));
         end
 
-        function moveCursor(this, cursorPosition) 
-            % MOVECURSOR positions the cursor at the specified location
+        function insertTextAtPosition(this, text, cursorPosition)
+            % INSERTTEXT writes the input text into the editor at the specified
+            % cursor position (see MOVECURSORPOSITION for details on how the
+            % position is specified)
             arguments
                 this (1,1) weblab.components.CodeEditor
-                cursorPosition (1,1) {mustBeCursorPosition}
+                text (1,1) string
+                cursorPosition (1,2) {mustBeLineAndNumber}
             end
-            if isnumeric(cursorPosition)
-                cursorPosition = cursorPosition - 1;
+
+            cursorPosition(2) = cursorPosition(2) - 1;
+            data = struct("text", text, "pos", cursorPosition);
+            this.publish(weblab.event.Event("insert_text_position", data));
+        end
+
+        function moveCursorToOffset(this, cursorOffset) 
+            % MOVECURSORTOOFFSET positions the cursor at the specified offset
+            % (number of UTF-16 chars from the start of the document). The
+            % start of the document has an offset of 1
+            arguments
+                this (1,1) weblab.components.CodeEditor
+                cursorOffset (1,1) {mustBeCursorOffset}
             end
-            this.publish(weblab.event.Event("move_cursor", cursorPosition));
+            if isnumeric(cursorOffset)
+                cursorOffset = cursorOffset - 1;
+            end
+            this.publish(...
+                weblab.event.Event("move_cursor_offset", cursorOffset));
+        end
+
+        function moveCursorToPosition(this, cursorPosition) 
+            % MOVECURSORTOPOSITON positions the cursor at the specified postion,
+            % specified as a [line, char] pair. If the line exceeds the number
+            % of lines in the document, the cursor is positioned at the last
+            % line. And if the character exceeds the lines count, then the
+            % cursor is positioned at the end of the line
+            arguments
+                this (1,1) weblab.components.CodeEditor
+                cursorPosition (1,2) {mustBeLineAndNumber}
+            end
+            cursorPosition(2) = cursorPosition(2) - 1;
+            this.publish(...
+                weblab.event.Event("move_cursor_position", cursorPosition));
+        end
+
+        function promise = fetchCursorOffset(this)
+            % FETCHCURSOROFFSET returns a promise that resolves into the
+            % current cursor offset
+            promise = this.fetch("cursor_offset").then(@(x) x+1);
         end
 
         function promise = fetchCursorPosition(this)
-            promise = this.fetch("cursor_position").then(@(x) x+1);
+            % FETCHCURSORPOSITION returns a promise that resolves into the
+            % current cursor position
+            promise = this.fetch("cursor_position").then(@(x) [x(1) x(2)+1]);
         end
     end
 
@@ -71,12 +112,21 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
 end
 
 
-function mustBeCursorPosition(position) 
-% MUSTBECURSORPOSITION checks that the specified position is one of the
+function mustBeCursorOffset(position) 
+% MUSTBECURSOROFFSET checks that the specified position is one of the
 % following;
 % - An integer number greater than 0 (start = 1)
 % - One of the following: "start", "end", "current"
 
 assert(any(strcmp(position, ["start","end","current"])) || ...
     (round(position) == position && position > 0 ));
+end
+
+function mustBeLineAndNumber(position)
+% MUSTBELINEANDNUMBER checks that the position is composed of a line number and 
+% a character location
+assert(round(position(1)) == position(1) && ...
+       position(1) >= 1 && ...
+       round(position(2)) == position(2) && ...
+       position(2) >=1);
 end

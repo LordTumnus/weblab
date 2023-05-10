@@ -58116,26 +58116,62 @@ class CodeEditor extends svelteComponent(CodeEditor$1) {
         this._element.$on("change", (ev) => {
             this.publish("value_changed", ev.detail);
         });
-        this.subscribe("insert_text", (data) => {
+        this.subscribe("insert_text_offset", (data) => {
             let v = this._element._view;
-            const idx = mapCursorPosition(data.pos, v);
+            const idx = mapCursorOffset(data.pos, v);
             v.dispatch({
                 changes: { from: idx, insert: data.text }
             });
         });
-        this.subscribe("move_cursor", (data) => {
+        this.subscribe("insert_text_position", (data) => {
             let v = this._element._view;
-            const n = mapCursorPosition(data, v);
+            v.state.doc.length;
+            const lines = v.state.doc.lines;
+            if (data.pos[0] > lines) {
+                data.pos[0] = lines;
+            }
+            const lineLength = v.state.doc.line(data.pos[0]).length;
+            if (data.pos[1] > lineLength) {
+                data.pos[1] = lineLength;
+            }
+            let n = v.state.doc.line(data.pos[0]).from + data.pos[1];
+            v.dispatch({
+                changes: { from: n, insert: data.text }
+            });
+        });
+        this.subscribe("move_cursor_offset", (data) => {
+            let v = this._element._view;
+            const n = mapCursorOffset(data, v);
+            v.dispatch({ selection: { head: n, anchor: n } });
+        });
+        this.subscribe("move_cursor_position", (data) => {
+            let v = this._element._view;
+            v.state.doc.length;
+            const lines = v.state.doc.lines;
+            if (data[0] > lines) {
+                data[0] = lines;
+            }
+            const lineLength = v.state.doc.line(data[0]).length;
+            if (data[1] > lineLength) {
+                data[1] = lineLength;
+            }
+            let n = v.state.doc.line(data[0]).from + data[1];
             v.dispatch({ selection: { head: n, anchor: n } });
         });
     }
-    get cursor_position() {
+    get cursor_offset() {
         const v = this._element._view;
         return v.state.selection.main.head;
     }
+    get cursor_position() {
+        const v = this._element._view;
+        const offset = v.state.selection.main.head;
+        const line = v.state.doc.lineAt(offset);
+        return [line.number, offset - line.from];
+    }
 }
 customElements.define("weblab-editor", CodeEditor);
-function mapCursorPosition(data, v) {
+function mapCursorOffset(data, v) {
     const docLength = v.state.doc.length;
     if (lodashExports.isNumber(data)) {
         return data > docLength ? docLength : data;
