@@ -12,13 +12,21 @@ Code Editor
 | WrapLines | `logical` | Whether lines are wrapped if they exceed the editors width
 | ValueChangedFcn | `function_handle` | Function executed after the value of the editor changes
 
+> Note: The `Value` property comes [debounced](https://www.freecodecamp.org/news/javascript-debounce-example/) from the view, with a debounce time of 500ms. That means that it updates **minimum** at a 500ms rate. If you need to query the real-time `Value`, use `fetchValue` instead.
 
 ## Methods
 
 | Name  	| Description   	|
 |-------	|:-:	|
-| insertText   	| Inject text at the specified position |
-| moveCursor  	| Move the cursor to a specific position in the document  	|
+| insertText   	| Inject text at the current cursor position |
+| replaceSelection  | Replace the current selection by a new text value. If no text is selected, then the text is inserted at the current cursor position |
+| moveCursorToOffset  	| Move the cursor to a specific offset in the document  |
+| moveCursorToPosition  	| Move the cursor to a specific position \[row, column\] in the document  |
+| selectFromOffset  	| Select the text contained within 2 offsets |
+| selectFromPosition  	|Select the text contained within 2 positions (given as \[row, column\] pairs)  |
+| fetchCursorOffset  	| Get a promise that resolves into the current cursor offset from the beginning of the document  |
+| fetchCursorPosition  	| Get a promise that resolves into the current cursor position, as a \[row, column\]|
+| fetchValue  	| Get a promise that resolves into the value of the document|
 
 
 ## Events
@@ -26,10 +34,6 @@ Code Editor
 | Name 	    | Description                       |
 |-------	|:-:	|
 | ValueChanged  | Event triggered when the value of the editor is changed by the user |    
-
-
-> Note: The `ValueChanged` method is **debounced**, so it does not update immediately after a change occurs. Be aware of this when reading the `Value` property as well (see the [example](#example))
-
 
 ## [Styling](../styling.md) 
 
@@ -41,7 +45,7 @@ Creation:
 
 ```matlab
 % Create the editor
-e = weblab.components.Progress();
+e = weblab.components.CodeEditor();
 e.Value = "% This is a code editor example" + newline + "a = 1 + 1;";
 e.Theme = "dark";
 
@@ -59,8 +63,16 @@ Methods
 e.insertText("%This is a comment on the first line" + newline, "start");
 e.insertText(newline+ "%This is a comment on the last line", "end");
 
-pause(0.5)
-e.insertText(newline + "%This is a comment on the middle of the document" + newline, ceil(strlength(e.Value)/2));
+% Inject some text
+e.moveCursorToOffset("start");
+e.insertText("%This is a comment on the first line" + newline);
+e.moveCursorToOffset("end");
+e.insertText(newline+ "%This is a comment on the last line");
+
+% Fetch the value of the document, since "Value" hasn't updated yet on Matlab. 
+% Use the value to move the cursor to the middle of the document and insert some text
+v = e.fetchValue().then(@(value) e.moveCursorToOffset(ceil(strlength(value)/2))).then(@(value) e.insertText(newline+"I go in the middle"+newline));
+
 ```
 
 ## Credits
