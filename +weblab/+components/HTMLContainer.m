@@ -11,7 +11,10 @@ classdef HTMLContainer < weblab.internal.FrameComponent & ...
     methods 
 
         function this = HTMLContainer()
-            this.subscribe("internal_event", @(e) this.handleChildEvent(e.source, e.data));
+            % HTMLCONTAINER constructor
+
+            this.subscribe("internal_event", ...
+                @(e) this.handleChildEvent(e.source, e.data));
         end
 
         function elements = appendElement(this, type)
@@ -36,17 +39,21 @@ classdef HTMLContainer < weblab.internal.FrameComponent & ...
 
     methods (Access = private)
         function element = createElement(this, type)
+            % CREATELEMENT creates a new object from the HTMLElement pseudo
+            % component class
             arguments
                 this weblab.components.HTMLContainer
                 type (1,1) string
             end
-            % Create an HTML object wrapper
+            % Create an HTML object 
             element = weblab.components.pseudo.HTMLElement(type);
             element.Container = this;
             this.HTMLChildren(end + 1) = element;
         end
 
         function handleChildEvent(this, src, data)
+            % HANDLECHILDEVENT is the callback executed whenever a child element
+            % listener is triggered in the view
             child = this.HTMLChildren([this.HTMLChildren.ID] == src);
             if ~isempty(child) 
                 child.handleEvent(data.name, data.data);
