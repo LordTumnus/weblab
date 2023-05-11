@@ -18,6 +18,8 @@ export default async function mapComponent(className: string): Promise<{ default
             return await import('../+components/progress/index');
         case 'weblab.components.CodeEditor':
             return await import('../+components/codeeditor/index');
+        case 'weblab.components.HTMLContainer':
+            return await import('../+components/htmlcontainer/index');
         default:
             return;
     }
