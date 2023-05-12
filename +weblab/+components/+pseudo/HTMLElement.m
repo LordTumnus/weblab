@@ -95,9 +95,9 @@ classdef HTMLElement < weblab.components.pseudo.PseudoComponent & ...
             % Options:
             % - event props: properties of the HTML Event that should be passed
             %                to Matlab (["clientX", "clientY"], ...)
-            % - useCapture: Events of the same "event" type that are bubbling 
-            %               upward through the tree will not trigger the 
-            %               listener if useCapture = true
+            % - useCapture: Trigger the listener on the capturing phase rather
+            %               than the bubbling one
+            % - stopPropagation: Impede that the event bubbles up
             % - mode: whether the view should debounce or throttle the event
             %         (defaults to "normal")
             % - time: if throttle or debounced, the characteristic time of the

@@ -58,6 +58,9 @@ classdef TagBar < weblab.internal.FrameComponent & ...
 
         function clearTags(this)
             % CLEARTAGS removes all tags from the view
+            arguments
+                this (1,1) weblab.components.TagBar
+            end
             evt = weblab.event.Event("clear_tags", []);
             this.publish(evt)
         end

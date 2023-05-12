@@ -33,10 +33,18 @@ classdef Tree < weblab.internal.FrameComponent & ...
         end
 
         function expandAll(this)
+            % EXPANDALL expands all nodes
+            arguments
+                this (1,1) weblab.components.Tree
+            end
             this.publish(weblab.event.Event("expand_all", []));
         end
 
         function collapseAll(this)
+            % COLLAPSEALL collapses all nodes
+            arguments
+                this (1,1) weblab.components.Tree
+            end
             this.publish(weblab.event.Event("collapse_all", []));
         end
     end

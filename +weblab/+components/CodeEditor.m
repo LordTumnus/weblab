@@ -47,6 +47,10 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
             % REPLACESELECTION changes the text under the current selection by
             % the new one. If there is nothing selected, the text is inserted at 
             % cursor just like INSERTTEXT
+            arguments
+                this (1,1) weblab.components.CodeEditor
+                text (1,1) string
+            end
             this.publish(weblab.event.Event("replace_text", text));
         end
 
@@ -116,12 +120,18 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
         function promise = fetchCursorOffset(this)
             % FETCHCURSOROFFSET returns a promise that resolves into the
             % current cursor offset
+            arguments
+                this (1,1) weblab.components.CodeEditor
+            end
             promise = this.fetch("cursor_offset").then(@(x) x+1);
         end
 
         function promise = fetchCursorPosition(this)
             % FETCHCURSORPOSITION returns a promise that resolves into the
             % current cursor position
+            arguments
+                this (1,1) weblab.components.CodeEditor
+            end
             promise = this.fetch("cursor_position").then(@(x) [x(1) x(2)+1]);
         end
 
@@ -136,6 +146,9 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
             % >> editor.insertText("Hello world")
             % >> v_prop = editor.Value; % "";
             % >> v_fetch = editor.fetchValue().wait().Value; % "Hello world"
+            arguments
+                this (1,1) weblab.components.CodeEditor
+            end
             promise = this.fetch("value").then(@(x) string(x));
         end
 
