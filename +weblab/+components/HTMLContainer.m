@@ -37,20 +37,18 @@ classdef HTMLContainer < weblab.internal.FrameComponent & ...
     end
 
 
-    methods (Access = private)
+    methods (Access = {?weblab.components.HTMLContainer, ...
+                       ?weblab.components.pseudo.HTMLElement})
         function element = createElement(this, type)
             % CREATELEMENT creates a new object from the HTMLElement pseudo
             % component class
-            arguments
-                this weblab.components.HTMLContainer
-                type (1,1) string
-            end
-            % Create an HTML object 
             element = weblab.components.pseudo.HTMLElement(type);
             element.Container = this;
             this.HTMLChildren(end + 1) = element;
         end
+    end
 
+    methods (Access = private)
         function handleChildEvent(this, src, data)
             % HANDLECHILDEVENT is the callback executed whenever a child element
             % listener is triggered in the view

@@ -58737,6 +58737,12 @@ class HTMLContainer extends ComponentContainer {
         this.subscribe("insert_html", (data) => {
             this.insertHTML(data.id, data.type);
         });
+        this.subscribe("set_text", (data) => {
+            this.setTextContent(data.source, data.pdata);
+        });
+        this.subscribe("insert_subhtml", (data) => {
+            this.subinsertHTML(data.source, data.pdata);
+        });
         this.subscribe("inline_style", (data) => {
             this.setChildInlineStyle(data.source, data.pdata);
         });
@@ -58752,7 +58758,8 @@ class HTMLContainer extends ComponentContainer {
     }
     /**
      * Insert a new HTML element inside the container
-     * @param {{id: string, type: string}} el Object containing the HTML type and id
+     * @param {string} id the identifier of the inserted element
+     * @param {string} type the type of the inserted element
      */
     insertHTML(id, type) {
         let r = document.createElement(type);
@@ -58761,10 +58768,35 @@ class HTMLContainer extends ComponentContainer {
         this.appendChild(r);
     }
     /**
+     * Add text to an element
+     * @param {string} id the identifier of the element
+     * @param {string} text the text content
+     */
+    setTextContent(id, text) {
+        let child = __classPrivateFieldGet(this, _HTMLContainer_elements, "f").find((c) => { return c.id === id; });
+        if (child !== undefined) {
+            child.textContent = text;
+        }
+    }
+    /**
+     * Insert a new HTML element inside another element
+     * @param {string} id the identifier of the element acting as container
+     * @param {{id: string, type: string}} el object containing the HTML type and id of the inserted element
+     */
+    subinsertHTML(id, el) {
+        let child = __classPrivateFieldGet(this, _HTMLContainer_elements, "f").find((c) => { return c.id === id; });
+        if (child !== undefined) {
+            let r = document.createElement(el.type);
+            r.id = el.id;
+            __classPrivateFieldGet(this, _HTMLContainer_elements, "f").push(r);
+            child.appendChild(r);
+        }
+    }
+    /**
      * Modify an attribute of an internal child
-     * @param {string} id The id of the child
-     * @param {string} attr The attribute to be modified
-     * @param {any} value The value of the attribute
+     * @param {string} id the id of the child
+     * @param {string} attr the attribute to be modified
+     * @param {any} value the value of the attribute
      */
     setChildAttribute(id, attr, value) {
         let child = __classPrivateFieldGet(this, _HTMLContainer_elements, "f").find((c) => { return c.id === id; });
@@ -58774,8 +58806,8 @@ class HTMLContainer extends ComponentContainer {
     }
     /**
      * Change the inline style of the child
-     * @param {string} id The id of the child
-     * @param {{}} style An object containing the style attributes
+     * @param {string} id the id of the child
+     * @param {{}} style an object containing the style attributes
      */
     setChildInlineStyle(id, style) {
         let child = __classPrivateFieldGet(this, _HTMLContainer_elements, "f").find((c) => { return c.id === id; });
@@ -58785,24 +58817,42 @@ class HTMLContainer extends ComponentContainer {
     }
     /**
      * Adds a new listener for a child
-     * @param {string} id The id of the child element
-     * @param listener An object containing the listener properties
+     * @param {string} id the id of the child element
+     * @param listener an object containing the listener properties
      */
-    addChildListener(id, listener) {
+    addChildListener(id, data) {
         let child = __classPrivateFieldGet(this, _HTMLContainer_elements, "f").find((c) => { return c.id === id; });
         // If no child, do nothing
         if (child === undefined) {
             return;
         }
+        const event = data.event;
+        const eventProps = data.options.eventProps;
+        const mode = data.options.mode;
+        const time = data.options.time;
+        const stopPropagation = data.options.stopPropagation;
+        const useCapture = data.options.useCapture;
         // Create the callback function based on the listener mode
-        let q = (e) => { this.publish("internal_event", { source: id, data: { name: listener.event, data: pick$1(e, listener.back) } }); };
+        let q = (e) => {
+            if (stopPropagation) {
+                e.stopImmediatePropagation();
+            }
+            this.publish("internal_event", {
+                source: id,
+                data: {
+                    name: event,
+                    data: pick$1(e, eventProps)
+                }
+            });
+        };
+        // Apply mode
         let f;
-        switch (listener.mode.type) {
+        switch (mode) {
             case 'debounce':
-                f = debounce$3((e) => q(e), listener.mode.time);
+                f = debounce$3((e) => q(e), time);
                 break;
             case 'throttle':
-                f = throttle$1((e) => q(e), listener.mode.time);
+                f = throttle$1((e) => q(e), time);
                 break;
             case 'normal':
                 f = (e) => q(e);
@@ -58811,17 +58861,19 @@ class HTMLContainer extends ComponentContainer {
         if (~has$1(__classPrivateFieldGet(this, _HTMLContainer_listeners, "f"), id)) {
             __classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id] = {};
         }
-        if (has$1(__classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id], listener.event)) {
+        if (has$1(__classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id], event)) {
             // Remove the listener before creating a new one
-            this.removeChildListener(id, listener.event);
+            this.removeChildListener(id, event);
         }
-        __classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id][listener.event] = (e) => f(e);
-        child.addEventListener(listener.event, __classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id][listener.event]);
+        __classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id][event] = (e) => f(e);
+        child.addEventListener(event, __classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id][event], useCapture);
     }
     removeChildListener(id, event) {
         let child = __classPrivateFieldGet(this, _HTMLContainer_elements, "f").find((c) => { return c.id === id; });
         if (child !== undefined && has$1(__classPrivateFieldGet(this, _HTMLContainer_listeners, "f"), id) && has$1(__classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id], event)) {
-            child.removeEventListener(event, __classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id][event]);
+            // Remove both useCapture = true and useCapture = false 
+            child.removeEventListener(event, __classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id][event], true);
+            child.removeEventListener(event, __classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id][event], false);
             delete __classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id][event];
         }
     }

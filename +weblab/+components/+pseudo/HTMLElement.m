@@ -14,16 +14,40 @@ classdef HTMLElement < weblab.components.pseudo.PseudoComponent & ...
         Callbacks struct = struct();
     end
 
-    methods 
+    methods (Access = ?weblab.components.HTMLContainer)
         function this = HTMLElement(type)
             % HTMLELEMENT constructor. 
             % Initializes the type
             this.Type = type;
         end
+    end
 
+    methods
         function clearInlineStyle(this)
             % CLEARINLINESTYLE removes the inline style from the element.
+            arguments
+                this (1,1) weblab.components.pseudo.HTMLElement
+            end
             this.setAttribute("style","");
+        end
+
+        function element = appendElement(this, type)
+            % APPENDELEMENT creates a new element and inserts it inside this one
+            arguments
+                this (1,1) weblab.components.pseudo.HTMLElement
+                type (1,1) string
+            end
+            element = this.Container.createElement(type);
+            this.publish("insert_subhtml",struct("id",element.ID,"type",type));
+        end
+
+        function setTextContent(this, text)
+            % SETTEXTCONTENT modifies the text contained within the element
+            arguments
+                this (1,1) weblab.components.pseudo.HTMLElement 
+                text (1,1) string
+            end
+            this.publish("set_text", text);
         end
 
 
@@ -61,15 +85,19 @@ classdef HTMLElement < weblab.components.pseudo.PseudoComponent & ...
                 name, value);
         end
 
-        function addEventListener(this, event, eventProps, callback, mode, time)
+        function addEventListener(this, event, callback, opts)
             % ADDEVENTLISTENER creates an Event listener in the view that, when
             % triggered, notifies this element and execute the defined callback.
             % To use this method, specifiy:
             % - event: name ("click", "mouseenter", ...)
-            % - event props: properties of the HTML Event that should be passed
-            %                to Matlab (["clientX", "clientY"], ...)
             % - callback: function executed when the listener is triggered.
             %             Its (single) input is the event coming from the view
+            % Options:
+            % - event props: properties of the HTML Event that should be passed
+            %                to Matlab (["clientX", "clientY"], ...)
+            % - useCapture: Events of the same "event" type that are bubbling 
+            %               upward through the tree will not trigger the 
+            %               listener if useCapture = true
             % - mode: whether the view should debounce or throttle the event
             %         (defaults to "normal")
             % - time: if throttle or debounced, the characteristic time of the
@@ -80,21 +108,26 @@ classdef HTMLElement < weblab.components.pseudo.PseudoComponent & ...
             % the previous listener. To avoid issues, guard your callback
             % functions from changing event properties (basically, use 
             % "isfield")
+
+
             arguments
                 this (1,1) weblab.components.pseudo.HTMLElement
                 event (1,1) string
-                eventProps string
                 callback (1,1) function_handle
-                mode (1,1) string {mustBeMember(mode, ["normal","debounce","throttle"])} = "normal";
-                time (1,1) double = 0;
+                opts.eventProps string = "";
+                opts.stopPropagation (1,1) logical = false;
+                opts.useCapture (1,1) logical = false;
+                opts.mode (1,1) string ...
+                    {mustBeMember(opts.mode, ["normal","debounce","throttle"])}...
+                    = "normal";
+                opts.time (1,1) double = 0;
             end
-            listener = struct();
-            listener.event = event;
-            listener.back = eventProps;
-            listener.mode = struct("type", mode, "time", time);
+            data = struct();
+            data.event = event;
+            data.options = opts;
 
             this.Callbacks.(event) = callback;
-            this.publish("event_listener", listener)
+            this.publish("event_listener", data)
         end
 
         function removeEventListener(this, event)

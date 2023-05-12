@@ -15,6 +15,12 @@ export default class HTMLContainer extends ComponentContainer {
         this.subscribe("insert_html", (data: { id: string, type: string }) => {
             this.insertHTML(data.id, data.type);
         })
+        this.subscribe("set_text", (data: { source: string, pdata: string }) => {
+            this.setTextContent(data.source, data.pdata);
+        })
+        this.subscribe("insert_subhtml", (data: { source: string, pdata: any }) => {
+            this.subinsertHTML(data.source, data.pdata);
+        })
         this.subscribe("inline_style", (data: { source: string, pdata: any }) => {
             this.setChildInlineStyle(data.source, data.pdata);
         })
@@ -31,7 +37,8 @@ export default class HTMLContainer extends ComponentContainer {
 
     /**
      * Insert a new HTML element inside the container
-     * @param {{id: string, type: string}} el Object containing the HTML type and id
+     * @param {string} id the identifier of the inserted element
+     * @param {string} type the type of the inserted element
      */
     insertHTML(id: string, type: string) {
         let r = document.createElement(type);
@@ -41,10 +48,37 @@ export default class HTMLContainer extends ComponentContainer {
     }
 
     /**
+     * Add text to an element
+     * @param {string} id the identifier of the element
+     * @param {string} text the text content
+     */
+    setTextContent(id: string, text: string) {
+        let child = this.#elements.find((c) => { return c.id === id });
+        if (child !== undefined) {
+            child.textContent = text;
+        }
+    }
+
+    /**
+     * Insert a new HTML element inside another element
+     * @param {string} id the identifier of the element acting as container
+     * @param {{id: string, type: string}} el object containing the HTML type and id of the inserted element
+     */
+    subinsertHTML(id: string, el: { id: string, type: string }) {
+        let child = this.#elements.find((c) => { return c.id === id });
+        if (child !== undefined) {
+            let r = document.createElement(el.type);
+            r.id = el.id;
+            this.#elements.push(r);
+            child.appendChild(r);
+        }
+    }
+
+    /**
      * Modify an attribute of an internal child
-     * @param {string} id The id of the child
-     * @param {string} attr The attribute to be modified
-     * @param {any} value The value of the attribute
+     * @param {string} id the id of the child
+     * @param {string} attr the attribute to be modified
+     * @param {any} value the value of the attribute
      */
     setChildAttribute(id: string, attr: string, value: any) {
         let child = this.#elements.find((c) => { return c.id === id });
@@ -55,8 +89,8 @@ export default class HTMLContainer extends ComponentContainer {
 
     /**
      * Change the inline style of the child
-     * @param {string} id The id of the child
-     * @param {{}} style An object containing the style attributes
+     * @param {string} id the id of the child
+     * @param {{}} style an object containing the style attributes
      */
     setChildInlineStyle(id: string, style: {}) {
         let child = this.#elements.find((c) => { return c.id === id });
@@ -67,26 +101,55 @@ export default class HTMLContainer extends ComponentContainer {
 
     /**
      * Adds a new listener for a child
-     * @param {string} id The id of the child element
-     * @param listener An object containing the listener properties
+     * @param {string} id the id of the child element
+     * @param listener an object containing the listener properties
      */
-    addChildListener(id: string, listener: { mode: { type: 'normal' | 'debounce' | 'throttle', time: number }, event: string, back: string[] }) {
-        let child = this.#elements.find((c) => { return c.id === id });
+    addChildListener(id: string, data: {
+        event: string,
+        options: {
+            mode: 'normal' | 'debounce' | 'throttle',
+            eventProps: string[],
+            useCapture: boolean,
+            stopPropagation: boolean
+            time: number,
+        }
+    }) {
 
+        let child = this.#elements.find((c) => { return c.id === id });
         // If no child, do nothing
         if (child === undefined) {
             return
         }
 
+        const event = data.event;
+        const eventProps = data.options.eventProps;
+        const mode = data.options.mode;
+        const time = data.options.time;
+        const stopPropagation = data.options.stopPropagation;
+        const useCapture = data.options.useCapture;
+
         // Create the callback function based on the listener mode
-        let q = (e:any) => { this.publish("internal_event", { source: id, data: { name: listener.event, data: pick(e, listener.back) }}) };
+        let q = (e: any) => { 
+            if (stopPropagation) {
+                e.stopImmediatePropagation();
+            }
+            this.publish("internal_event", { 
+                source: id, 
+                data: {
+                    name: event,
+                    data: pick(e, eventProps)
+                }
+            }) 
+        };
+
+        // Apply mode
         let f: (e: any) => void;
-        switch (listener.mode.type) {
+        switch (mode) {
             case 'debounce':
-                f = debounce((e: any) => q(e), listener.mode.time);
+                f = debounce((e: any) => q(e), time);
                 break;
             case 'throttle':
-                f = throttle((e: any) => q(e), listener.mode.time);
+                f = throttle((e: any) => q(e), time);
                 break;
             case 'normal':
                 f = (e: any) => q(e);
@@ -96,18 +159,20 @@ export default class HTMLContainer extends ComponentContainer {
         if (~has(this.#listeners, id)) {
             this.#listeners[id] = {};
         }
-        if (has(this.#listeners[id], listener.event)) {
+        if (has(this.#listeners[id], event)) {
             // Remove the listener before creating a new one
-            this.removeChildListener(id, listener.event);
+            this.removeChildListener(id, event);
         }
-        this.#listeners[id][listener.event] = (e: any) => f(e);
-        child.addEventListener(listener.event, this.#listeners[id][listener.event])
+        this.#listeners[id][event] = (e: any) => f(e);
+        child.addEventListener(event, this.#listeners[id][event], useCapture)
     }
 
     removeChildListener(id: string, event: string) {
         let child = this.#elements.find((c) => { return c.id === id });
         if (child !== undefined && has(this.#listeners, id) && has(this.#listeners[id], event)) {
-            child.removeEventListener(event, this.#listeners[id][event]);
+            // Remove both useCapture = true and useCapture = false 
+            child.removeEventListener(event, this.#listeners[id][event], true);
+            child.removeEventListener(event, this.#listeners[id][event], false);
             delete this.#listeners[id][event]
         }
     }
