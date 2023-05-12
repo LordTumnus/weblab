@@ -1,4 +1,5 @@
 classdef HTMLContainer < weblab.internal.FrameComponent & ...
+        weblab.internal.DynamicContainer & ...
         weblab.components.mixin.Styled
 
     properties (SetAccess = private)
@@ -17,32 +18,30 @@ classdef HTMLContainer < weblab.internal.FrameComponent & ...
                 @(e) this.handleChildEvent(e.source, e.data));
         end
 
-        function elements = appendElement(this, type)
+        function element = appendElement(this, type, namespace)
             % APPENDELEMENT appends a new HTML element of the specified type to 
             % this container. The new element must also have a unique id
             arguments
                 this (1,1) weblab.components.HTMLContainer
-            end
-            arguments (Repeating)
                 type (1,1) string
+                namespace (1,1) string = "http://www.w3.org/1999/xhtml";
             end
-            elements = cellfun(@(x) this.createElement(x), ...
-                type, 'UniformOutput', true) ;
+            element = this.createElement(type, namespace);
 
             % Publish the event to the view
-            arrayfun(@(x) ...
-                this.publish(weblab.event.Event("insert_html",struct("id",x.ID,"type",x.Type))),...
-                elements);
+            ev = weblab.event.Event("insert_html",...
+                struct("id",element.ID,"type",element.Type, "ns", element.Namespace));
+            this.publish(ev);
         end
     end
 
 
     methods (Access = {?weblab.components.HTMLContainer, ...
                        ?weblab.components.pseudo.HTMLElement})
-        function element = createElement(this, type)
+        function element = createElement(this, type, namespace)
             % CREATELEMENT creates a new object from the HTMLElement pseudo
             % component class
-            element = weblab.components.pseudo.HTMLElement(type);
+            element = weblab.components.pseudo.HTMLElement(type, namespace);
             element.Container = this;
             this.HTMLChildren(end + 1) = element;
         end

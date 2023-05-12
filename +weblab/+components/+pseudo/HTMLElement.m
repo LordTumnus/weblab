@@ -6,6 +6,8 @@ classdef HTMLElement < weblab.internal.pseudo.PseudoComponent & ...
         % TYPE: The tagname of the element. Some valid tagnames are:
         % div, button, span, i, ul, li, ...
         Type (1,1) string
+        % NAMESPACE: A valid element namespace
+        Namespace (1,1) string
     end
 
     properties (Access = private)
@@ -15,10 +17,11 @@ classdef HTMLElement < weblab.internal.pseudo.PseudoComponent & ...
     end
 
     methods (Access = ?weblab.components.HTMLContainer)
-        function this = HTMLElement(type)
+        function this = HTMLElement(type, namespace)
             % HTMLELEMENT constructor. 
-            % Initializes the type
+            % Initializes the type and namespace props
             this.Type = type;
+            this.Namespace = namespace;
         end
     end
 
@@ -31,14 +34,16 @@ classdef HTMLElement < weblab.internal.pseudo.PseudoComponent & ...
             this.setAttribute("style","");
         end
 
-        function element = appendElement(this, type)
+        function element = appendElement(this, type, namespace)
             % APPENDELEMENT creates a new element and inserts it inside this one
             arguments
                 this (1,1) weblab.components.pseudo.HTMLElement
                 type (1,1) string
+                namespace (1,1) string = "http://www.w3.org/1999/xhtml";
             end
-            element = this.Container.createElement(type);
-            this.publish("insert_subhtml",struct("id",element.ID,"type",type));
+            element = this.Container.createElement(type, namespace);
+            this.publish("insert_subhtml",...
+                struct("id",element.ID,"type",type,"ns",namespace));
         end
 
         function setTextContent(this, text)

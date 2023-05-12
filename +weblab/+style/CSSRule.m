@@ -25,6 +25,9 @@ classdef CSSRule < handle
                 prop string
                 value string
             end
+            if (prop == "display_")
+                prop = "display";
+            end
             if value == "" && this.Map.isKey(prop)
                 this.Map.remove(prop);
             elseif value ~= ""

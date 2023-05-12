@@ -7,13 +7,13 @@ import has from "lodash/has";
 
 export default class HTMLContainer extends ComponentContainer {
 
-    #elements: HTMLElement[] = [];
+    #elements: (HTMLElement|SVGElement)[] = [];
     #listeners: {} = {};
 
     constructor() {
         super();
-        this.subscribe("insert_html", (data: { id: string, type: string }) => {
-            this.insertHTML(data.id, data.type);
+        this.subscribe("insert_html", (data: { id: string, type: string, ns: string }) => {
+            this.insertHTML(data.id, data.type, data.ns);
         })
         this.subscribe("set_text", (data: { source: string, pdata: string }) => {
             this.setTextContent(data.source, data.pdata);
@@ -40,10 +40,10 @@ export default class HTMLContainer extends ComponentContainer {
      * @param {string} id the identifier of the inserted element
      * @param {string} type the type of the inserted element
      */
-    insertHTML(id: string, type: string) {
-        let r = document.createElement(type);
+    insertHTML(id: string, type: string, ns: string) {
+        let r = document.createElementNS(ns, type);
         r.id = id;
-        this.#elements.push(r);
+        this.#elements.push(<HTMLElement|SVGElement>r);
         this.appendChild(r);
     }
 
@@ -64,12 +64,12 @@ export default class HTMLContainer extends ComponentContainer {
      * @param {string} id the identifier of the element acting as container
      * @param {{id: string, type: string}} el object containing the HTML type and id of the inserted element
      */
-    subinsertHTML(id: string, el: { id: string, type: string }) {
+    subinsertHTML(id: string, el: { id: string, type: string, ns: string }) {
         let child = this.#elements.find((c) => { return c.id === id });
         if (child !== undefined) {
-            let r = document.createElement(el.type);
+            let r = document.createElementNS(el.ns, el.type);
             r.id = el.id;
-            this.#elements.push(r);
+            this.#elements.push(<HTMLElement|SVGElement>r);
             child.appendChild(r);
         }
     }
@@ -129,17 +129,17 @@ export default class HTMLContainer extends ComponentContainer {
         const useCapture = data.options.useCapture;
 
         // Create the callback function based on the listener mode
-        let q = (e: any) => { 
+        let q = (e: any) => {
             if (stopPropagation) {
                 e.stopImmediatePropagation();
             }
-            this.publish("internal_event", { 
-                source: id, 
+            this.publish("internal_event", {
+                source: id,
                 data: {
                     name: event,
                     data: pick(e, eventProps)
                 }
-            }) 
+            })
         };
 
         // Apply mode

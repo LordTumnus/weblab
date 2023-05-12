@@ -58735,7 +58735,7 @@ class HTMLContainer extends ComponentContainer {
         _HTMLContainer_elements.set(this, []);
         _HTMLContainer_listeners.set(this, {});
         this.subscribe("insert_html", (data) => {
-            this.insertHTML(data.id, data.type);
+            this.insertHTML(data.id, data.type, data.ns);
         });
         this.subscribe("set_text", (data) => {
             this.setTextContent(data.source, data.pdata);
@@ -58761,8 +58761,8 @@ class HTMLContainer extends ComponentContainer {
      * @param {string} id the identifier of the inserted element
      * @param {string} type the type of the inserted element
      */
-    insertHTML(id, type) {
-        let r = document.createElement(type);
+    insertHTML(id, type, ns) {
+        let r = document.createElementNS(ns, type);
         r.id = id;
         __classPrivateFieldGet(this, _HTMLContainer_elements, "f").push(r);
         this.appendChild(r);
@@ -58786,7 +58786,7 @@ class HTMLContainer extends ComponentContainer {
     subinsertHTML(id, el) {
         let child = __classPrivateFieldGet(this, _HTMLContainer_elements, "f").find((c) => { return c.id === id; });
         if (child !== undefined) {
-            let r = document.createElement(el.type);
+            let r = document.createElementNS(el.ns, el.type);
             r.id = el.id;
             __classPrivateFieldGet(this, _HTMLContainer_elements, "f").push(r);
             child.appendChild(r);
