@@ -18,7 +18,8 @@ class CodeEditor extends svelteComponent(SvelteCodeEditor) {
             const idx = v.state.selection.main.head;
             v.dispatch({
                 changes: { from: idx, insert: data },
-                selection: { anchor: idx + data.length }
+                selection: { anchor: idx + data.length },
+                scrollIntoView: true,
             })
         })
 
