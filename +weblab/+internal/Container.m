@@ -29,7 +29,9 @@ classdef Container < handle
                 @(src, ~) this.removeComponent(src) ...
             );
             % If the component was holding events, try sending them to the frame
-            this.sendEventToView(component.clearEventQueue());
+            evts = component.clearEventQueue();
+            arrayfun(@(x) this.sendEventToView(x), evts);
+            
             % Specify the parent of the component to this container, and add it
             % a random name
             component.Container = this;
