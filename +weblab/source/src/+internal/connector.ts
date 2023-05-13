@@ -1,6 +1,6 @@
 
 import debounce from "lodash/debounce"
-import type {ComponentType} from "./component"
+import type { ComponentType } from "./component"
 
 interface HTMLConnector {
     Data: any,
@@ -11,10 +11,10 @@ let components: Array<ComponentType> = [];
 let preIds: Array<{ id: string, events: Array<{ name: string, data: any }> }> = [];
 let evtQueue: Array<{ id: string, name: string, data: any }> = [];
 
-const debouncedPublish = debounce(()=>{
+const debouncedPublish = debounce(() => {
     connector!.Data = evtQueue;
     evtQueue = [];
-}, 50, {leading: false, trailing: true});
+}, 50, { leading: false, trailing: true });
 
 export default {
     /**
@@ -57,27 +57,28 @@ export default {
         connector = html;
         connector.addEventListener("DataChanged", () => {
             html.Data.forEach((ev: { id: string, name: string, data: any }) => {
-                handleMatlabEvent(ev.id, ev.name, ev.data);
+                this.handleMatlabEvent(ev.id, ev.name, ev.data);
             })
         })
+    },
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} name 
+     * @param {any} data 
+     */
+    handleMatlabEvent(id: string, name: string, data: any) {
+        let src = components.find((e) => { return e.id === id });
+        if (src !== undefined) {
+            src.handleEvent(name, data);
+            return;
+        }
+        let pre = preIds.find((e) => { return e.id === id });
+        if (pre !== undefined) {
+            pre.events.push({ name: name, data: data });
+            return;
+        }
     }
 }
 
-/**
- * 
- * @param {string} id 
- * @param {string} name 
- * @param {any} data 
- */
-function handleMatlabEvent(id: string, name: string, data: any) {
-    let src = components.find((e) => { return e.id === id });
-    if (src !== undefined) {
-        src.handleEvent(name, data);
-        return;
-    }
-    let pre = preIds.find((e) => { return e.id === id });
-    if (pre !== undefined) {
-        pre.events.push({ name: name, data: data });
-        return;
-    }
-}

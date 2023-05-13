@@ -17,10 +17,7 @@ export default class ComponentContainer extends Component {
         });
 
         this.subscribe("wb__childevent", (ev: {name: string, id:string, data:any}) => {
-            let src = this.components.find((e) => { return e.id === ev.id });
-            if (src) {
-                src.handleEvent(ev.name, ev.data);
-            }
+            connector.handleMatlabEvent(ev.id, ev.name, ev.data);
         })
     }
 

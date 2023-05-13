@@ -592,29 +592,29 @@ var connector$1 = {
         connector = html;
         connector.addEventListener("DataChanged", () => {
             html.Data.forEach((ev) => {
-                handleMatlabEvent(ev.id, ev.name, ev.data);
+                this.handleMatlabEvent(ev.id, ev.name, ev.data);
             });
         });
+    },
+    /**
+     *
+     * @param {string} id
+     * @param {string} name
+     * @param {any} data
+     */
+    handleMatlabEvent(id, name, data) {
+        let src = components.find((e) => { return e.id === id; });
+        if (src !== undefined) {
+            src.handleEvent(name, data);
+            return;
+        }
+        let pre = preIds.find((e) => { return e.id === id; });
+        if (pre !== undefined) {
+            pre.events.push({ name: name, data: data });
+            return;
+        }
     }
 };
-/**
- *
- * @param {string} id
- * @param {string} name
- * @param {any} data
- */
-function handleMatlabEvent(id, name, data) {
-    let src = components.find((e) => { return e.id === id; });
-    if (src !== undefined) {
-        src.handleEvent(name, data);
-        return;
-    }
-    let pre = preIds.find((e) => { return e.id === id; });
-    if (pre !== undefined) {
-        pre.events.push({ name: name, data: data });
-        return;
-    }
-}
 
 /******************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -1892,10 +1892,7 @@ class ComponentContainer extends Component {
             this.insertComponent(data);
         });
         this.subscribe("wb__childevent", (ev) => {
-            let src = this.components.find((e) => { return e.id === ev.id; });
-            if (src) {
-                src.handleEvent(ev.name, ev.data);
-            }
+            connector$1.handleMatlabEvent(ev.id, ev.name, ev.data);
         });
     }
     /**
@@ -16931,7 +16928,7 @@ var index$2 = /*#__PURE__*/Object.freeze({
 	default: ProgressBar
 });
 
-var css$1 = "weblab-editor {\n    position: relative;\n    overflow: hidden;\n}\n.codemirror-wrapper{\n    height: 100%;\n}\n.codemirror-wrapper > .cm-editor {\n    height: 100%;\n}";
+var css$1 = "weblab-editor {\n    position: relative;\n    overflow: hidden;\n    display: flex;\n}\n.codemirror-wrapper{\n    flex-grow: 1;\n    position: relative;\n}\n.codemirror-wrapper > .cm-editor {\n    height: 100%;\n}";
 n(css$1,{});
 
 var lodash = {exports: {}};

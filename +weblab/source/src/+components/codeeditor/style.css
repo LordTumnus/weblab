@@ -1,9 +1,11 @@
 weblab-editor {
     position: relative;
     overflow: hidden;
+    display: flex;
 }
 .codemirror-wrapper{
-    height: 100%;
+    flex-grow: 1;
+    position: relative;
 }
 .codemirror-wrapper > .cm-editor {
     height: 100%;
