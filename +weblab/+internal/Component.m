@@ -183,7 +183,9 @@ classdef (Abstract) Component < handle & dynamicprops
             % REQUESTFRAMEUPDATE sends a request up the container chain. When
             % arriving to the frame, it will cause a property change that will
             % request an update
-            this.Container.requestFrameUpdate();
+            if ~isempty(this.Container)
+                this.Container.requestFrameUpdate();
+            end
         end
 
 
