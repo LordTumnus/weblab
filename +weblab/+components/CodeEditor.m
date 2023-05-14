@@ -32,13 +32,17 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
                 @(~,e) this.changePropertiesWithoutNotifyingView("Value", e.Data));
         end
 
-        function insertText(this, text)
+        function insertText(this, text, offset)
             % INSERTTEXT writes the input text into the editor at the current
             % cursor offset. The cursor will also be moved to the end of the
             % text
             arguments
                 this (1,1) weblab.components.CodeEditor
                 text (1,1) string
+                offset (1,1) {mustBeCursorOffset} = "current"
+            end
+            if (isnumeric(offset) || offset == "current")
+                this.moveCursorToOffset(offset);
             end
             this.publish(weblab.event.Event("insert_text", text));
         end
