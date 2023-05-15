@@ -9,14 +9,31 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
         % THEME: Theme used in the editor
         Theme (1,1) string {mustBeMember(Theme, ["light","dark"])} = "light";
 
-        % EDITABLE: Whether the user can write text in the editor
-        Editable (1,1) logical = true;
+        % LINENUMBERS: Show the line number gutter to the left of the editor
+        LineNumbers (1,1) logical = true;
+
+        % HIGHLIGHTACTIVELINE: Add another background color to the line that has
+        % currently focus (the color depends on the theme)
+        HighlightActiveLine (1,1) logical = true;
 
         % WRAPLINES: If a line exceeds the width of the editor, break it into
         % more lines (not counted as a new line number). If false, scroll to see
         % the overflow
         WrapLines (1,1) logical = false;
 
+        % MATCHBRACKETS: Upon writing an open bracket, if the editor
+        % automatically creates a closing one. Also, if the cursor is on a
+        % bracket, if the matching (closing or opening) bracket is highlighted
+        MatchBrackets (1,1) logical = true;
+
+        % HIGHLIGHTMATCHINGWORDS: Highlight words that are the same as the
+        % current selection
+        HighlightMatchingWords (1,1) logical = true;
+
+        % EDITABLE: Whether the user can write text in the editor
+        Editable (1,1) logical = true;
+
+        
     end
 
     events (Description = "HasCallbackProperty")

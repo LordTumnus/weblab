@@ -57949,10 +57949,11 @@ function create_fragment(ctx) {
 	let current;
 
 	function codemirror_value_binding(value) {
-		/*codemirror_value_binding*/ ctx[6](value);
+		/*codemirror_value_binding*/ ctx[10](value);
 	}
 
 	let codemirror_props = {
+		basic: false,
 		extensions: /*extensions*/ ctx[4],
 		tabSize: 4,
 		theme: /*theme*/ ctx[1] === "dark" ? darkTheme : lightTheme$1,
@@ -57966,7 +57967,7 @@ function create_fragment(ctx) {
 
 	codemirror = new CodeMirror({ props: codemirror_props });
 	binding_callbacks.push(() => bind(codemirror, 'value', codemirror_value_binding));
-	codemirror.$on("change", /*change_handler*/ ctx[7]);
+	codemirror.$on("change", /*change_handler*/ ctx[11]);
 
 	return {
 		c() {
@@ -57978,6 +57979,7 @@ function create_fragment(ctx) {
 		},
 		p(ctx, [dirty]) {
 			const codemirror_changes = {};
+			if (dirty & /*extensions*/ 16) codemirror_changes.extensions = /*extensions*/ ctx[4];
 			if (dirty & /*theme*/ 2) codemirror_changes.theme = /*theme*/ ctx[1] === "dark" ? darkTheme : lightTheme$1;
 			if (dirty & /*editable*/ 4) codemirror_changes.editable = /*editable*/ ctx[2];
 			if (dirty & /*wrap_lines*/ 8) codemirror_changes.lineWrapping = /*wrap_lines*/ ctx[3];
@@ -58009,17 +58011,55 @@ function instance($$self, $$props, $$invalidate) {
 	let { theme = "light" } = $$props;
 	let { value = "" } = $$props;
 	let { editable = true } = $$props;
+	let { line_numbers = true } = $$props;
+	let { highlight_active_line = true } = $$props;
+	let { match_brackets = true } = $$props;
 	let { wrap_lines = false } = $$props;
+	let { highlight_matching_words = true } = $$props;
 	let { _view } = $$props;
 	const matlab_lan = StreamLanguage.define(matlab);
+	let extensions;
 
-	const extensions = [
-		matlab_lan,
-		ViewPlugin.define(v => {
-			$$invalidate(5, _view = v);
-			return {};
-		})
-	];
+	function get_custom_extensions(useLineNumbers, doHighlightLine, doMatchBrackets, doHighlightMatching) {
+		let custom_extensions = [
+			highlightSpecialChars(),
+			history(),
+			foldGutter(),
+			dropCursor(),
+			EditorState.allowMultipleSelections.of(false),
+			indentOnInput(),
+			syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+			autocompletion(),
+			keymap.of([
+				...closeBracketsKeymap,
+				...defaultKeymap,
+				//...searchKeymap,
+				...historyKeymap,
+				...foldKeymap
+			])
+		]; //...completionKeymap,
+		//...lintKeymap,
+
+		if (useLineNumbers) {
+			custom_extensions.push(lineNumbers());
+		}
+
+		if (doHighlightLine) {
+			custom_extensions.push(highlightActiveLine());
+			custom_extensions.push(highlightActiveLineGutter());
+		}
+
+		if (doMatchBrackets) {
+			custom_extensions.push(bracketMatching());
+			custom_extensions.push(closeBrackets());
+		}
+
+		if (doHighlightMatching) {
+			custom_extensions.push(highlightSelectionMatches());
+		}
+
+		return custom_extensions;
+	}
 
 	function codemirror_value_binding(value$1) {
 		value = value$1;
@@ -58034,8 +58074,25 @@ function instance($$self, $$props, $$invalidate) {
 		if ('theme' in $$props) $$invalidate(1, theme = $$props.theme);
 		if ('value' in $$props) $$invalidate(0, value = $$props.value);
 		if ('editable' in $$props) $$invalidate(2, editable = $$props.editable);
+		if ('line_numbers' in $$props) $$invalidate(6, line_numbers = $$props.line_numbers);
+		if ('highlight_active_line' in $$props) $$invalidate(7, highlight_active_line = $$props.highlight_active_line);
+		if ('match_brackets' in $$props) $$invalidate(8, match_brackets = $$props.match_brackets);
 		if ('wrap_lines' in $$props) $$invalidate(3, wrap_lines = $$props.wrap_lines);
+		if ('highlight_matching_words' in $$props) $$invalidate(9, highlight_matching_words = $$props.highlight_matching_words);
 		if ('_view' in $$props) $$invalidate(5, _view = $$props._view);
+	};
+
+	$$self.$$.update = () => {
+		if ($$self.$$.dirty & /*line_numbers, highlight_active_line, match_brackets, highlight_matching_words*/ 960) {
+			$$invalidate(4, extensions = [
+				matlab_lan,
+				ViewPlugin.define(v => {
+					$$invalidate(5, _view = v);
+					return {};
+				}),
+				...get_custom_extensions(line_numbers, highlight_active_line, match_brackets, highlight_matching_words)
+			]);
+		}
 	};
 
 	return [
@@ -58045,6 +58102,10 @@ function instance($$self, $$props, $$invalidate) {
 		wrap_lines,
 		extensions,
 		_view,
+		line_numbers,
+		highlight_active_line,
+		match_brackets,
+		highlight_matching_words,
 		codemirror_value_binding,
 		change_handler
 	];
@@ -58058,7 +58119,11 @@ let CodeEditor$1 = class CodeEditor extends SvelteComponent {
 			theme: 1,
 			value: 0,
 			editable: 2,
+			line_numbers: 6,
+			highlight_active_line: 7,
+			match_brackets: 8,
 			wrap_lines: 3,
+			highlight_matching_words: 9,
 			_view: 5
 		});
 	}
@@ -58090,12 +58155,48 @@ let CodeEditor$1 = class CodeEditor extends SvelteComponent {
 		flush();
 	}
 
+	get line_numbers() {
+		return this.$$.ctx[6];
+	}
+
+	set line_numbers(line_numbers) {
+		this.$$set({ line_numbers });
+		flush();
+	}
+
+	get highlight_active_line() {
+		return this.$$.ctx[7];
+	}
+
+	set highlight_active_line(highlight_active_line) {
+		this.$$set({ highlight_active_line });
+		flush();
+	}
+
+	get match_brackets() {
+		return this.$$.ctx[8];
+	}
+
+	set match_brackets(match_brackets) {
+		this.$$set({ match_brackets });
+		flush();
+	}
+
 	get wrap_lines() {
 		return this.$$.ctx[3];
 	}
 
 	set wrap_lines(wrap_lines) {
 		this.$$set({ wrap_lines });
+		flush();
+	}
+
+	get highlight_matching_words() {
+		return this.$$.ctx[9];
+	}
+
+	set highlight_matching_words(highlight_matching_words) {
+		this.$$set({ highlight_matching_words });
 		flush();
 	}
 
