@@ -58229,6 +58229,12 @@ class CodeEditor extends svelteComponent(CodeEditor$1) {
             let v = this._element._view;
             v.dispatch(v.state.replaceSelection(data));
         });
+        this.subscribe("undo", () => {
+            undo(this._element._view);
+        });
+        this.subscribe("redo", () => {
+            redo(this._element._view);
+        });
         this.subscribe("move_cursor_offset", (data) => {
             let v = this._element._view;
             const n = mapCursorOffset(data, v);

@@ -2,6 +2,8 @@ import svelteComponent from '../../+internal/other/svelte/component';
 import './style.css';
 import { isNumber } from 'lodash';
 import type { EditorView } from "@codemirror/view";
+import { undo, redo } from "@codemirror/commands";
+
 //@ts-ignore
 import SvelteCodeEditor from './src/CodeEditor.svelte';
 
@@ -26,6 +28,14 @@ class CodeEditor extends svelteComponent(SvelteCodeEditor) {
         this.subscribe("replace_text", (data: string) => {
             let v: EditorView = this._element._view;
             v.dispatch(v.state.replaceSelection(data));
+        })
+
+        this.subscribe("undo", () => {
+            undo(this._element._view);
+        })
+
+        this.subscribe("redo", () => {
+            redo(this._element._view);
         })
 
         this.subscribe("move_cursor_offset", (data: CursorOffset) => {

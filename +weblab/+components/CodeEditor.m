@@ -75,6 +75,22 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
             this.publish(weblab.event.Event("replace_text", text));
         end
 
+        function undo(this)
+            % UNDO undoes a single group of history events
+            arguments
+                this (1,1) weblab.components.CodeEditor
+            end
+            this.publish(weblab.event.Event("undo", []));
+        end
+
+        function redo(this)
+            % REDO redoes a single group of history events
+            arguments
+                this (1,1) weblab.components.CodeEditor
+            end
+            this.publish(weblab.event.Event("redo", []));
+        end
+
         function moveCursorToOffset(this, cursorOffset) 
             % MOVECURSORTOOFFSET positions the cursor at the specified offset
             % (number of UTF-16 chars from the start of the document). The
