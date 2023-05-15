@@ -9,8 +9,13 @@ Code Editor
 | Value  | `string`	| The text displayed in the Editor                 	|
 | Theme | `"light"\|"dark"` | Colors used in the editor (`light` resembles matlab default theme, `dark` is vscode dark theme)
 | Editable | `logical` | Whether the content of the editor can be edited by the user
+| LineNumbers | `logical` | Show or hide the lines on the left of the editor
+| HighlightActiveLine | `logical` | Add a background color to the line currently being focused
 | WrapLines | `logical` | Whether lines are wrapped if they exceed the editors width
+| MatchBrackets | `logical` | Whether to automatically create a closing bracket when the user types an opening one
+| HighlightMatchingWords | `logical` | Highlight words matching the currently selected one
 | ValueChangedFcn | `function_handle` | Function executed after the value of the editor changes
+
 
 > Note: The `Value` property comes [debounced](https://www.freecodecamp.org/news/javascript-debounce-example/) from the view, with a debounce time of 500ms. That means that it updates **minimum** at a 500ms rate. If you need to query the real-time `Value`, use `fetchValue` instead.
 
