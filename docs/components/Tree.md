@@ -5,8 +5,9 @@
 
 | Name 	    | Type  | Description                       |
 |-------	|:-:	|------------------------------	|
-| Data     	| `struct`| The nodes that will be rendered inside the tree. Nodes must be in the form `struct("name",*,"chidlren",[])` 	|
+| Data     	| `struct`| The nodes that will be rendered inside the tree. Nodes must be in the form `struct("name": string,"chidlren": node[],"icon"?: string)` 	|
 | HighlightOnFilter  | `logical`	| Apply highlighting colors to the nodes when the `filter` method is called                        	|
+| ImageMap  | `struct`	| Map names to icons                       	|
 
 ## Methods
 
@@ -41,11 +42,12 @@ Creating the tree:
 
 ```matlab
 % Convert the current folder into a struct 
-data = weblab.utils.dir2struct(pwd);
+[data, icons] = weblab.utils.dir2struct(pwd);
 
 % Initialize the frame and the tree
 f = weblab.internal.Frame();
 t = weblab.components.Tree();
+t.ImageMap = icons;
 t.Data = data;
 
 % Insert the tree in the frame
