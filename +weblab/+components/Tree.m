@@ -19,7 +19,7 @@ classdef Tree < weblab.internal.FrameComponent & ...
         % field and it is an entry of the map, the icon will be used in the view
         % > If an image map contains a "default" element, it will be used for 
         % all nodes whose icon is not found in the map
-        ImageMap (1,1) struct {mustBeImage}
+        ImageMap (1,1) struct {mustBeImageMap}
     end
 
 
@@ -65,4 +65,11 @@ assert(isa(d, 'struct') && ...
        isfield(d,"name") && ...
        strcmp(d.name, "root") && ...
        isfield(d, "children"));
+end
+
+function mustBeImageMap(m)
+% MUSTBEIMAGEMAP checks that the passed input is a struct whose values are CSS
+% images
+assert(isa(m, "struct") && ...
+    all(structfun(@(x) isa(x, "weblab.style.Image"), m)));
 end
