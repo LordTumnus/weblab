@@ -17,6 +17,8 @@ classdef Tree < weblab.internal.FrameComponent & ...
         % whose entries are the icon names, and whose values are
         % weblab.style.Images. If a leaf in the Data property has an "icon"
         % field and it is an entry of the map, the icon will be used in the view
+        % > If an image map contains a "default" element, it will be used for 
+        % all nodes whose icon is not found in the map
         ImageMap (1,1) struct {mustBeImage}
     end
 
