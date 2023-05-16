@@ -6,12 +6,18 @@ classdef Tree < weblab.internal.FrameComponent & ...
         % DATA: Nested struct that will be displayed as the tree in the view.
         % The Data must follow the follwing structure:
         % - name = 'root'
-        % - children = [struct('name': string, 'children':[...])] 
+        % - children = [struct('name': string, 'icon'?: string, 'children':[...])]
         Data struct {mustBeValidData} = struct("name","root","children",[]);
 
         % HIGHLIGHTONFILTER: Enables or disables highlighting when the <filter>
         % method is called
         HighlightOnFilter (1,1) logical = true;
+
+        % IMAGEMAP: To show an image next to a leaf (not branches), define a map
+        % whose entries are the icon names, and whose values are
+        % weblab.style.Images. If a leaf in the Data property has an "icon"
+        % field and it is an entry of the map, the icon will be used in the view
+        ImageMap (1,1) struct {mustBeImage}
     end
 
 

@@ -10,10 +10,13 @@ export default class Tree extends Component {
     #branch_template: HTMLLIElement;
     #leaf_template: HTMLLIElement;
 
-    Data: any = {"name":'root', "children": []};
+
+
+    Data: any = { "name": 'root', "children": [] };
     ViewData: any;
 
     applyHighlight: boolean = true;
+    image_map = {};
 
     constructor() {
         super();
@@ -45,6 +48,7 @@ export default class Tree extends Component {
     set highlight_on_filter(tf: boolean) {
         this.applyHighlight = tf;
     }
+
 
     #initialize() {
 
@@ -138,7 +142,7 @@ export default class Tree extends Component {
                     node["expanded"] = true;
                 }
                 return node;
-            }, 
+            },
             {
                 childrenPath: ['node', 'children'],
             }
@@ -154,7 +158,7 @@ export default class Tree extends Component {
                     node["expanded"] = false;
                 }
                 return node;
-            }, 
+            },
             {
                 childrenPath: ['node', 'children'],
             }
@@ -248,7 +252,17 @@ export default class Tree extends Component {
                 ? node.markedname
                 : node.name.replace(/<\/?[^>]+(>|$)/g, "");
             node.highlighted ? n_text.classList.add("treeview__node--highlight") : n_text.classList.remove("treeview__node--highlight")
-            
+
+            let n_icon = n.querySelector<HTMLDivElement>(":scope > div > i")!;
+            if ("icon" in node) {
+                if (node.icon in this.image_map) {
+                    n_icon.style.backgroundImage = this.image_map[node.icon];
+                    n_icon.classList.add("leaf-icon");
+                } else if (this.image_map["default"] !== undefined) {
+                    n_icon.style.backgroundImage = this.image_map["default"];
+                    n_icon.classList.add("leaf-icon");
+                }
+            }
             /*
             n_text.addEventListener("click", (e) => {
                 uihtml.Data = { name: "nodeClick", data: node.name }

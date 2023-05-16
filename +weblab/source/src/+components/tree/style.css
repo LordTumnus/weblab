@@ -72,10 +72,20 @@ weblab-tree {
   display: inline-block;
   user-select: none;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 
 .treeview__node > i {
   color: #777;
+}
+
+.treeview__node > i.leaf-icon {
+  height: 1em;
+  width: 1em;
+  display: inline-block;
+  background-size: cover;
+  margin-right: 5px;
 }
 
 .treeview__node > i > svg {
