@@ -1,6 +1,6 @@
 <script lang="ts">
   import CodeMirror from "svelte-codemirror-editor";
-  import { type Extension, EditorState } from "@codemirror/state";
+  import { type Extension, EditorState, Compartment } from "@codemirror/state";
 
   import {
     StreamLanguage,
@@ -50,25 +50,30 @@
   export let wrap_lines: boolean = false;
   export let highlight_matching_words: boolean = true;
 
+  // Internal properties
   export let _view: EditorView;
-
   const matlab_lan = StreamLanguage.define(matlab);
 
-  let extensions: any[];
+  let extensions: Extension[];
   $: extensions = [
     matlab_lan,
     ViewPlugin.define((v) => {
       _view = v;
       return {};
     }),
-    ...get_custom_extensions(line_numbers, highlight_active_line, match_brackets, highlight_matching_words),
+    ...get_custom_extensions(
+      line_numbers,
+      highlight_active_line,
+      match_brackets,
+      highlight_matching_words
+    ),
   ];
 
   function get_custom_extensions(
     useLineNumbers: boolean,
-    doHighlightLine: boolean, 
+    doHighlightLine: boolean,
     doMatchBrackets: boolean,
-    doHighlightMatching: boolean,
+    doHighlightMatching: boolean
   ) {
     let custom_extensions: Extension[] = [
       highlightSpecialChars(),

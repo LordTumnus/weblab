@@ -3,6 +3,8 @@ import './style.css';
 import { isNumber } from 'lodash';
 import type { EditorView } from "@codemirror/view";
 import { undo, redo } from "@codemirror/commands";
+import { EditorState, Compartment, StateEffect } from "@codemirror/state";
+import readOnlyRangesExtension from "codemirror-readonly-ranges";
 
 //@ts-ignore
 import SvelteCodeEditor from './src/CodeEditor.svelte';
@@ -10,6 +12,7 @@ import SvelteCodeEditor from './src/CodeEditor.svelte';
 type CursorOffset = number | 'start' | 'end' | 'current';
 
 class CodeEditor extends svelteComponent(SvelteCodeEditor) {
+    _uneditable: Compartment;
     constructor() {
         super();
         this._element.$on("change", (ev) => {
@@ -82,11 +85,47 @@ class CodeEditor extends svelteComponent(SvelteCodeEditor) {
         const line = v.state.doc.lineAt(offset);
         return [line.number, offset - line.from];
     }
+
+    set uneditable_lines(lines: number | number[]) {
+        const v: EditorView = this._element._view;
+        if (this._uneditable === undefined) {
+            this._uneditable = new Compartment();
+            v.dispatch({
+                effects: StateEffect.appendConfig.of(this._uneditable.of([])),
+            })
+        }
+        v.dispatch({
+            effects: this._uneditable.reconfigure(updateUneditableLinesExtension(lines))
+        });
+    }
 };
 export default CodeEditor;
 
 customElements.define("weblab-editor", CodeEditor);
 
+const updateUneditableLinesExtension = (lines: number | number[]) => {
+    let getReadOnlyRanges = (
+        targetState: EditorState
+    ): Array<{ from: number | undefined; to: number | undefined }> => {
+
+        let code_lines: Array<{
+            from: number | undefined;
+            to: number | undefined;
+        }> = [];
+        if (!Array.isArray(lines)) {
+            lines = [lines];
+        }
+        for (const line of lines) {
+            code_lines.push({
+                from: targetState.doc.line(line).from,
+                to: targetState.doc.line(line).to,
+            });
+        };
+        return code_lines;
+    };
+
+    return readOnlyRangesExtension(getReadOnlyRanges);
+};
 
 function mapCursorOffset(data: CursorOffset, v: EditorView): number {
     const docLength = v.state.doc.length

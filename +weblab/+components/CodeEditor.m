@@ -33,6 +33,9 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
         % EDITABLE: Whether the user can write text in the editor
         Editable (1,1) logical = true;
 
+        % UNEDITABLELINES: Lines of the code that cannot be edited
+        UneditableLines (1,:) {mustBeInteger, mustBeGreaterThan(UneditableLines, 0)} = [];
+
         
     end
 
