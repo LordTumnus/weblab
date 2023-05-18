@@ -1,46 +1,14 @@
 <script lang="ts">
   import CodeMirror from "svelte-codemirror-editor";
-  import { type Extension, EditorState, Compartment } from "@codemirror/state";
-
-  import {
-    StreamLanguage,
-    foldGutter,
-    indentOnInput,
-    syntaxHighlighting,
-    defaultHighlightStyle,
-    bracketMatching,
-    foldKeymap,
-  } from "@codemirror/language";
-
-  import {
-    ViewPlugin,
-    EditorView,
-    lineNumbers,
-    highlightActiveLineGutter,
-    highlightSpecialChars,
-    drawSelection,
-    dropCursor,
-    rectangularSelection,
-    crosshairCursor,
-    highlightActiveLine,
-    keymap,
-  } from "@codemirror/view";
-
-  import {
-    closeBrackets,
-    autocompletion,
-    closeBracketsKeymap,
-    completionKeymap,
-  } from "@codemirror/autocomplete";
-
-  import { highlightSelectionMatches, searchKeymap } from "@codemirror/search";
-  import { history, defaultKeymap, historyKeymap } from "@codemirror/commands";
-  import { lintKeymap } from "@codemirror/lint";
-
+  import { type Extension } from "@codemirror/state";
+  import { StreamLanguage } from "@codemirror/language";
+  import { ViewPlugin, EditorView } from "@codemirror/view";
+  import getExtensions from "./extensions/basic";
   import darkTheme from "./theme/dark";
   import lightTheme from "./theme/light";
   import matlab from "./lang/matlab";
 
+  // Properties that can be controlled in Matlab
   export let theme: string = "light";
   export let value: string = "";
   export let editable: boolean = true;
@@ -52,65 +20,25 @@
 
   // Internal properties
   export let _view: EditorView;
-  const matlab_lan = StreamLanguage.define(matlab);
+
+  // Plugins
+  let lang = StreamLanguage.define(matlab);
+  let viewP = ViewPlugin.define((view: EditorView) => {
+    _view = view;
+    return {};
+  });
 
   let extensions: Extension[];
   $: extensions = [
-    matlab_lan,
-    ViewPlugin.define((v) => {
-      _view = v;
-      return {};
-    }),
-    ...get_custom_extensions(
+    lang,
+    viewP,
+    ...getExtensions(
       line_numbers,
       highlight_active_line,
       match_brackets,
       highlight_matching_words
     ),
   ];
-
-  function get_custom_extensions(
-    useLineNumbers: boolean,
-    doHighlightLine: boolean,
-    doMatchBrackets: boolean,
-    doHighlightMatching: boolean
-  ) {
-    let custom_extensions: Extension[] = [
-      highlightSpecialChars(),
-      history(),
-      foldGutter(),
-      dropCursor(),
-      EditorState.allowMultipleSelections.of(false),
-      indentOnInput(),
-      syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-      autocompletion(),
-      keymap.of([
-        ...closeBracketsKeymap,
-        ...defaultKeymap,
-        //...searchKeymap,
-        ...historyKeymap,
-        ...foldKeymap,
-        //...completionKeymap,
-        //...lintKeymap,
-      ]),
-    ];
-    if (useLineNumbers) {
-      custom_extensions.push(lineNumbers());
-    }
-    if (doHighlightLine) {
-      custom_extensions.push(highlightActiveLine());
-      custom_extensions.push(highlightActiveLineGutter());
-    }
-    if (doMatchBrackets) {
-      custom_extensions.push(bracketMatching());
-      custom_extensions.push(closeBrackets());
-    }
-    if (doHighlightMatching) {
-      custom_extensions.push(highlightSelectionMatches());
-    }
-
-    return custom_extensions;
-  }
 </script>
 
 <CodeMirror
