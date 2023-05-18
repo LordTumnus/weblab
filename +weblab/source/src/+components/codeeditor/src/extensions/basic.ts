@@ -24,7 +24,7 @@ const basic_extensions = [
 ]
 
 export default function get_extensions(line_numbers: boolean, active_line: boolean, match_brackets: boolean, highlight_match: boolean) {
-    let custom_extensions: Extension[];
+    let custom_extensions: Extension[] = [];
     if (line_numbers) {
         custom_extensions.push(lineNumbers());
     }
