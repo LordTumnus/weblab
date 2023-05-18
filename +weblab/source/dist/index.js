@@ -16961,7 +16961,7 @@ var index$2 = /*#__PURE__*/Object.freeze({
 	default: ProgressBar
 });
 
-var css$1 = "weblab-editor {\n    position: relative;\n    overflow: hidden;\n    display: flex;\n}\n.codemirror-wrapper{\n    flex-grow: 1;\n    position: relative;\n}\n.codemirror-wrapper > .cm-editor {\n    height: 100%;\n}";
+var css$1 = "weblab-editor {\n    position: relative;\n    overflow: hidden;\n    display: flex;\n}\n.codemirror-wrapper{\n    flex-grow: 1;\n    position: relative;\n    overflow-x: scroll;\n}\n.codemirror-wrapper > .cm-editor {\n    height: 100%;\n}";
 n$1(css$1,{});
 
 var lodash = {exports: {}};
@@ -57464,6 +57464,41 @@ class CodeMirror extends SvelteComponent {
 	}
 }
 
+const basic_extensions = [
+    highlightSpecialChars(),
+    history(),
+    foldGutter(),
+    dropCursor(),
+    EditorState.allowMultipleSelections.of(false),
+    indentOnInput(),
+    syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+    autocompletion(),
+    keymap.of([
+        ...closeBracketsKeymap,
+        ...defaultKeymap,
+        ...historyKeymap,
+        ...foldKeymap,
+    ]),
+];
+function get_extensions(line_numbers, active_line, match_brackets, highlight_match) {
+    let custom_extensions = [];
+    if (line_numbers) {
+        custom_extensions.push(lineNumbers());
+    }
+    if (active_line) {
+        custom_extensions.push(highlightActiveLine());
+        custom_extensions.push(highlightActiveLineGutter());
+    }
+    if (match_brackets) {
+        custom_extensions.push(bracketMatching());
+        custom_extensions.push(closeBrackets());
+    }
+    if (highlight_match) {
+        custom_extensions.push(highlightSelectionMatches());
+    }
+    return [...basic_extensions, ...custom_extensions];
+}
+
 // Using https://github.com/PrismJS/prism-themes/blob/master/themes/prism-vsc-dark-plus.css as reference for the colors
 const foreground$1 = '#9cdcfe', background$1 = '#1e1e1e', darkBackground$1 = '#000000', highlightBackground$1 = '#ffffff0f', cursor$1 = '#c6c6c6', selection$1 = '#094771', tooltipBackground$1 = '#252526', invalid$1 = '#ff0000', keyword$1 = '#569cd6', controlFlowAndModuleKeywords$1 = '#c586c0', functions$1 = '#dcdcaa', typesAndClasses$1 = '#4ec9b0', tagNames$1 = '#569cd6', operators$1 = '#d4d4d4', regexes$1 = '#d16969', strings$1 = '#ce9178', names$1 = '#9cdcfe', punctuationAndSeparators$1 = '#d4d4d4', angleBrackets$1 = '#808080', templateStringBraces$1 = '#569cd6', propertyNames$1 = '#9cdcfe', booleansAndAtoms$1 = '#569cd6', numbersAndUnits$1 = '#b5cea8', metaAndComments$1 = '#6a9955';
 const vsCodeDarkPlusTheme = EditorView.theme({
@@ -58054,49 +58089,16 @@ function instance($$self, $$props, $$invalidate) {
 	let { wrap_lines = false } = $$props;
 	let { highlight_matching_words = true } = $$props;
 	let { _view } = $$props;
-	const matlab_lan = StreamLanguage.define(matlab);
+
+	// Plugins
+	let lang = StreamLanguage.define(matlab);
+
+	let viewP = ViewPlugin.define(view => {
+		$$invalidate(5, _view = view);
+		return {};
+	});
+
 	let extensions;
-
-	function get_custom_extensions(useLineNumbers, doHighlightLine, doMatchBrackets, doHighlightMatching) {
-		let custom_extensions = [
-			highlightSpecialChars(),
-			history(),
-			foldGutter(),
-			dropCursor(),
-			EditorState.allowMultipleSelections.of(false),
-			indentOnInput(),
-			syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
-			autocompletion(),
-			keymap.of([
-				...closeBracketsKeymap,
-				...defaultKeymap,
-				//...searchKeymap,
-				...historyKeymap,
-				...foldKeymap
-			])
-		]; //...completionKeymap,
-		//...lintKeymap,
-
-		if (useLineNumbers) {
-			custom_extensions.push(lineNumbers());
-		}
-
-		if (doHighlightLine) {
-			custom_extensions.push(highlightActiveLine());
-			custom_extensions.push(highlightActiveLineGutter());
-		}
-
-		if (doMatchBrackets) {
-			custom_extensions.push(bracketMatching());
-			custom_extensions.push(closeBrackets());
-		}
-
-		if (doHighlightMatching) {
-			custom_extensions.push(highlightSelectionMatches());
-		}
-
-		return custom_extensions;
-	}
 
 	function codemirror_value_binding(value$1) {
 		value = value$1;
@@ -58122,12 +58124,9 @@ function instance($$self, $$props, $$invalidate) {
 	$$self.$$.update = () => {
 		if ($$self.$$.dirty & /*line_numbers, highlight_active_line, match_brackets, highlight_matching_words*/ 960) {
 			$$invalidate(4, extensions = [
-				matlab_lan,
-				ViewPlugin.define(v => {
-					$$invalidate(5, _view = v);
-					return {};
-				}),
-				...get_custom_extensions(line_numbers, highlight_active_line, match_brackets, highlight_matching_words)
+				lang,
+				viewP,
+				...get_extensions(line_numbers, highlight_active_line, match_brackets, highlight_matching_words)
 			]);
 		}
 	};

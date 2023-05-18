@@ -6,6 +6,7 @@ weblab-editor {
 .codemirror-wrapper{
     flex-grow: 1;
     position: relative;
+    overflow-x: scroll;
 }
 .codemirror-wrapper > .cm-editor {
     height: 100%;
