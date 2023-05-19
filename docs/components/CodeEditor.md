@@ -1,6 +1,4 @@
-# PROGRESS
-
-Code Editor
+# CODE EDITOR
 
 ## Properties
 
