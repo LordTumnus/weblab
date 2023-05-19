@@ -25,6 +25,7 @@ Code Editor
 |-------	|:-:	|
 | insertText   	| Inject text at the current cursor position |
 | replaceSelection  | Replace the current selection by a new text value. If no text is selected, then the text is inserted at the current cursor position |
+| setUneditableLines  | Disallow editing of certain lines |
 | undo  | Undo the last history event |
 | redo  | Redo the last undone history event |
 | moveCursorToOffset  	| Move the cursor to a specific offset in the document  |
