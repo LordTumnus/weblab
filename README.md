@@ -46,6 +46,7 @@ These components are currently supported:
 - TagFilterTree: [docs](/docs/components/TagFilterTree.md) / [src](/%2Bweblab/%2Bcomponents/TagFilterTree.m)
 - Progress: [docs](/docs/components/Porgress.md) / [src](/%2Bweblab/%2Bcomponents/Progress.m)
 - CodeEditor: [docs](/docs/components/CodeEditor.md) / [src](/%2Bweblab/%2Bcomponents/CodeEditor.m)
+- HTMLContainer: [docs](/docs/components/HTMLContainer.md) / [src](/%2Bweblab/%2Bcomponents/HTMLContainer.m)
 
 More to come! These are the next planned components:
 - PDF renderer
