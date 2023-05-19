@@ -33,10 +33,6 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
         % EDITABLE: Whether the user can write text in the editor
         Editable (1,1) logical = true;
 
-        % UNEDITABLELINES: Lines of the code that cannot be edited
-        UneditableLines (1,:) {mustBeInteger, mustBeGreaterThan(UneditableLines, 0)} = [];
-
-        
     end
 
     events (Description = "HasCallbackProperty")
@@ -76,6 +72,17 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
                 text (1,1) string
             end
             this.publish(weblab.event.Event("replace_text", text));
+        end
+
+        function setUneditableLines(this, lines)
+            % SETUNEDITABLELINES makes some lines of the code uneditable. Note
+            % that the uneditable lines are NOT fixed in the document: they will
+            % move if new lines are inserted above them. 
+            arguments
+                this (1,1) weblab.components.CodeEditor
+                lines (1,:) {mustBeInteger, mustBeGreaterThan(lines, 0)} = [];
+            end
+            this.publish(weblab.event.Event("make_uneditable", lines));
         end
 
         function undo(this)

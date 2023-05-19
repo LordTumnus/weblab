@@ -72,6 +72,13 @@ class CodeEditor extends svelteComponent(SvelteCodeEditor) {
             data ? v.focus() : v.contentDOM.blur();
         })
 
+        this.subscribe("make_uneditable", (data: number | number[]) => {
+            const v: EditorView = this._element._view;
+            const n_lines = v.state.doc.lines;
+            let lines: number[] = [].concat.apply([], Array.of(data));
+            markUneditableRange(v, lines.filter((n => n <= n_lines)));
+        })
+
     }
 
     get cursor_offset() {
@@ -84,13 +91,6 @@ class CodeEditor extends svelteComponent(SvelteCodeEditor) {
         const offset = v.state.selection.main.head;
         const line = v.state.doc.lineAt(offset);
         return [line.number, offset - line.from];
-    }
-
-    set uneditable_lines(lines: number | number[]) {
-        const v: EditorView = this._element._view;
-        const n_lines = v.state.doc.lines;
-        let flat_lines : number[] = [].concat.apply([],Array.of(lines));
-        markUneditableRange(v, flat_lines.filter((n => n <= n_lines)));
     }
 };
 export default CodeEditor;

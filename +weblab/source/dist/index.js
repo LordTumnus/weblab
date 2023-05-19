@@ -58370,6 +58370,12 @@ class CodeEditor extends svelteComponent(CodeEditor$1) {
             let v = this._element._view;
             data ? v.focus() : v.contentDOM.blur();
         });
+        this.subscribe("make_uneditable", (data) => {
+            const v = this._element._view;
+            const n_lines = v.state.doc.lines;
+            let lines = [].concat.apply([], Array.of(data));
+            markUneditableRange(v, lines.filter((n => n <= n_lines)));
+        });
     }
     get cursor_offset() {
         const v = this._element._view;
@@ -58380,12 +58386,6 @@ class CodeEditor extends svelteComponent(CodeEditor$1) {
         const offset = v.state.selection.main.head;
         const line = v.state.doc.lineAt(offset);
         return [line.number, offset - line.from];
-    }
-    set uneditable_lines(lines) {
-        const v = this._element._view;
-        const n_lines = v.state.doc.lines;
-        let flat_lines = [].concat.apply([], Array.of(lines));
-        markUneditableRange(v, flat_lines.filter((n => n <= n_lines)));
     }
 }
 customElements.define("weblab-editor", CodeEditor);
