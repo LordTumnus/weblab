@@ -4,7 +4,6 @@ import { isNumber } from 'lodash';
 import type { EditorView } from "@codemirror/view";
 import { undo, redo } from "@codemirror/commands";
 import { EditorState, Compartment, StateEffect } from "@codemirror/state";
-import readOnlyRangesExtension from "codemirror-readonly-ranges";
 import { markUneditableRange } from './src/extensions/readonly';
 
 //@ts-ignore
@@ -96,29 +95,6 @@ export default CodeEditor;
 
 customElements.define("weblab-editor", CodeEditor);
 
-const updateUneditableLinesExtension = (lines: number | number[]) => {
-    let getReadOnlyRanges = (
-        targetState: EditorState
-    ): Array<{ from: number | undefined; to: number | undefined }> => {
-
-        let code_lines: Array<{
-            from: number | undefined;
-            to: number | undefined;
-        }> = [];
-        if (!Array.isArray(lines)) {
-            lines = [lines];
-        }
-        for (const line of lines) {
-            code_lines.push({
-                from: targetState.doc.line(line).from,
-                to: targetState.doc.line(line).to,
-            });
-        };
-        return code_lines;
-    };
-
-    return readOnlyRangesExtension(getReadOnlyRanges);
-};
 
 function mapCursorOffset(data: CursorOffset, v: EditorView): number {
     const docLength = v.state.doc.length
