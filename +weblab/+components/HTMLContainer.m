@@ -53,6 +53,9 @@ classdef HTMLContainer < weblab.internal.FrameComponent & ...
                 this (1,1) weblab.components.HTMLContainer
                 element (1,1) weblab.components.pseudo.HTMLElement
             end
+            if ~isvalid(this)
+                return
+            end
             idx = this.HTMLChildren == element;
             if any(idx)
                 ev = weblab.event.Event("remove_html", element.id);
