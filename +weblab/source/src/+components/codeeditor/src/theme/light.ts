@@ -27,7 +27,9 @@ const foreground = '#000000',
   propertyNames = '#9cdcfe',
   booleansAndAtoms = '#569cd6',
   numbersAndUnits = '#000000',
-  metaAndComments = '#008013';
+  metaAndComments = '#008013',
+  uneditable = '#ebebeb',
+  activeUneditable = '#e2eae1';
 
 export const lightThemeStyle = EditorView.theme(
   {
@@ -55,8 +57,15 @@ export const lightThemeStyle = EditorView.theme(
     '.cm-searchMatch.cm-searchMatch-selected': {
       backgroundColor: '#6199ff2f',
     },
-
+    '.cm-uneditable': {
+      backgroundColor: uneditable,
+      "-webkitUserModify": "read-only",
+    },
     '.cm-activeLine': { backgroundColor: highlightBackground },
+    '.cm-uneditable.cm-activeLine': {
+      backgroundColor: activeUneditable,
+      "-webkitUserModify": "read-only",
+    },
     '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
 
     '&.cm-editor': {
@@ -199,6 +208,6 @@ export const lightTheme = HighlightStyle.define([
 /// Extension to enable the VS Code Dark Plus theme (both the editor theme and
 /// the highlight style).
 export default [
-    lightThemeStyle,
+  lightThemeStyle,
   syntaxHighlighting(lightTheme),
 ];

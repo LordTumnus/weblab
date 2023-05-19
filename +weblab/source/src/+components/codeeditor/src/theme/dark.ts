@@ -28,7 +28,10 @@ const foreground = '#9cdcfe',
   propertyNames = '#9cdcfe',
   booleansAndAtoms = '#569cd6',
   numbersAndUnits = '#b5cea8',
-  metaAndComments = '#6a9955';
+  metaAndComments = '#6a9955',
+  uneditable = '#3b3636',
+  activeUneditable = '#3b36369c';
+  
 
 export const vsCodeDarkPlusTheme = EditorView.theme(
   {
@@ -57,7 +60,15 @@ export const vsCodeDarkPlusTheme = EditorView.theme(
       backgroundColor: '#6199ff2f',
     },
 
+    '.cm-uneditable': {
+      backgroundColor: uneditable,
+      "-webkitUserModify": "read-only",
+    },
     '.cm-activeLine': { backgroundColor: highlightBackground },
+    '.cm-uneditable.cm-activeLine': {
+      backgroundColor: activeUneditable,
+      "-webkitUserModify": "read-only",
+    },
     '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
 
     '&.cm-editor': {

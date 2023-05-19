@@ -32,9 +32,6 @@ const uneditableField = StateField.define<DecorationSet>({
 })
 
 const uneditableMark = Decoration.line({ class: "cm-uneditable" });
-const uneditableTheme = EditorView.theme({
-    ".cm-uneditable": { backgroundColor: "blue" }
-})
 
 function readOnlyTransactionFilter() {
     return EditorState.transactionFilter.of((tr) => {
@@ -53,12 +50,6 @@ function readOnlyTransactionFilter() {
                     }
                     range.next();
                 }
-
-                /*
-                readonlyRangeSet.between(chFrom, chTo, (roFrom, roTo) => {
-                    if (chTo > roFrom && chFrom < roTo) block = true;
-                })
-                */
             })
             if (block) return []
         }
@@ -71,7 +62,6 @@ let ro_compartment = new Compartment;
 export function getROExtension() {
     return ro_compartment.of([
         uneditableField,
-        uneditableTheme,
         readOnlyTransactionFilter(),
     ])
 }
@@ -97,7 +87,6 @@ export function markUneditableRange(view: EditorView, lines: number[]) {
 
     effects.push(ro_compartment.reconfigure([
         uneditableField,
-        uneditableTheme,
         readOnlyTransactionFilter(),
     ]))
 

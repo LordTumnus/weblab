@@ -39201,9 +39201,6 @@ const uneditableField = StateField.define({
     provide: f => EditorView.decorations.from(f)
 });
 const uneditableMark = Decoration.line({ class: "cm-uneditable" });
-const uneditableTheme = EditorView.theme({
-    ".cm-uneditable": { backgroundColor: "blue" }
-});
 function readOnlyTransactionFilter() {
     return EditorState.transactionFilter.of((tr) => {
         const startState = tr.startState;
@@ -39221,11 +39218,6 @@ function readOnlyTransactionFilter() {
                     }
                     range.next();
                 }
-                /*
-                readonlyRangeSet.between(chFrom, chTo, (roFrom, roTo) => {
-                    if (chTo > roFrom && chFrom < roTo) block = true;
-                })
-                */
             });
             if (block)
                 return [];
@@ -39237,7 +39229,6 @@ let ro_compartment = new Compartment;
 function getROExtension() {
     return ro_compartment.of([
         uneditableField,
-        uneditableTheme,
         readOnlyTransactionFilter(),
     ]);
 }
@@ -39258,7 +39249,6 @@ function markUneditableRange(view, lines) {
         return false;
     effects.push(ro_compartment.reconfigure([
         uneditableField,
-        uneditableTheme,
         readOnlyTransactionFilter(),
     ]));
     view.dispatch({ effects });
@@ -43038,7 +43028,7 @@ function get_extensions(line_numbers, active_line, match_brackets, highlight_mat
 }
 
 // Using https://github.com/PrismJS/prism-themes/blob/master/themes/prism-vsc-dark-plus.css as reference for the colors
-const foreground$1 = '#9cdcfe', background$1 = '#1e1e1e', darkBackground$1 = '#000000', highlightBackground$1 = '#ffffff0f', cursor$1 = '#c6c6c6', selection$1 = '#094771', tooltipBackground$1 = '#252526', invalid$1 = '#ff0000', keyword$1 = '#569cd6', controlFlowAndModuleKeywords$1 = '#c586c0', functions$2 = '#dcdcaa', typesAndClasses$1 = '#4ec9b0', tagNames$1 = '#569cd6', operators$1 = '#d4d4d4', regexes$1 = '#d16969', strings$1 = '#ce9178', names$1 = '#9cdcfe', punctuationAndSeparators$1 = '#d4d4d4', angleBrackets$1 = '#808080', templateStringBraces$1 = '#569cd6', propertyNames$1 = '#9cdcfe', booleansAndAtoms$1 = '#569cd6', numbersAndUnits$1 = '#b5cea8', metaAndComments$1 = '#6a9955';
+const foreground$1 = '#9cdcfe', background$1 = '#1e1e1e', darkBackground$1 = '#000000', highlightBackground$1 = '#ffffff0f', cursor$1 = '#c6c6c6', selection$1 = '#094771', tooltipBackground$1 = '#252526', invalid$1 = '#ff0000', keyword$1 = '#569cd6', controlFlowAndModuleKeywords$1 = '#c586c0', functions$2 = '#dcdcaa', typesAndClasses$1 = '#4ec9b0', tagNames$1 = '#569cd6', operators$1 = '#d4d4d4', regexes$1 = '#d16969', strings$1 = '#ce9178', names$1 = '#9cdcfe', punctuationAndSeparators$1 = '#d4d4d4', angleBrackets$1 = '#808080', templateStringBraces$1 = '#569cd6', propertyNames$1 = '#9cdcfe', booleansAndAtoms$1 = '#569cd6', numbersAndUnits$1 = '#b5cea8', metaAndComments$1 = '#6a9955', uneditable$1 = '#3b3636', activeUneditable$1 = '#3b36369c';
 const vsCodeDarkPlusTheme = EditorView.theme({
     '&': {
         color: foreground$1,
@@ -43059,7 +43049,15 @@ const vsCodeDarkPlusTheme = EditorView.theme({
     '.cm-searchMatch.cm-searchMatch-selected': {
         backgroundColor: '#6199ff2f',
     },
+    '.cm-uneditable': {
+        backgroundColor: uneditable$1,
+        "-webkitUserModify": "read-only",
+    },
     '.cm-activeLine': { backgroundColor: highlightBackground$1 },
+    '.cm-uneditable.cm-activeLine': {
+        backgroundColor: activeUneditable$1,
+        "-webkitUserModify": "read-only",
+    },
     '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
     '&.cm-editor': {
         borderRadius: '5px',
@@ -43193,7 +43191,7 @@ var darkTheme = [
 ];
 
 // Using https://github.com/PrismJS/prism-themes/blob/master/themes/prism-vsc-dark-plus.css as reference for the colors
-const foreground = '#000000', background = '#ffffff', darkBackground = '#000000', highlightBackground = '#E5FADD66', cursor = '#000000', selection = '#2A55A1', tooltipBackground = '#ffffff', invalid = '#ff0000', keyword = '#0E00FF', controlFlowAndModuleKeywords = '#c586c0', functions$1 = '#dcdcaa', typesAndClasses = '#4ec9b0', tagNames = '#569cd6', operators = '#000000', regexes = '#d16969', strings = '#A709F5', names = '#000000', punctuationAndSeparators = '#000000', angleBrackets = '#808080', templateStringBraces = '#569cd6', propertyNames = '#9cdcfe', booleansAndAtoms = '#569cd6', numbersAndUnits = '#000000', metaAndComments = '#008013';
+const foreground = '#000000', background = '#ffffff', darkBackground = '#000000', highlightBackground = '#E5FADD66', cursor = '#000000', selection = '#2A55A1', tooltipBackground = '#ffffff', invalid = '#ff0000', keyword = '#0E00FF', controlFlowAndModuleKeywords = '#c586c0', functions$1 = '#dcdcaa', typesAndClasses = '#4ec9b0', tagNames = '#569cd6', operators = '#000000', regexes = '#d16969', strings = '#A709F5', names = '#000000', punctuationAndSeparators = '#000000', angleBrackets = '#808080', templateStringBraces = '#569cd6', propertyNames = '#9cdcfe', booleansAndAtoms = '#569cd6', numbersAndUnits = '#000000', metaAndComments = '#008013', uneditable = '#ebebeb', activeUneditable = '#e2eae1';
 const lightThemeStyle = EditorView.theme({
     '&': {
         color: foreground,
@@ -43214,7 +43212,15 @@ const lightThemeStyle = EditorView.theme({
     '.cm-searchMatch.cm-searchMatch-selected': {
         backgroundColor: '#6199ff2f',
     },
+    '.cm-uneditable': {
+        backgroundColor: uneditable,
+        "-webkitUserModify": "read-only",
+    },
     '.cm-activeLine': { backgroundColor: highlightBackground },
+    '.cm-uneditable.cm-activeLine': {
+        backgroundColor: activeUneditable,
+        "-webkitUserModify": "read-only",
+    },
     '.cm-selectionMatch': { backgroundColor: '#aafe661a' },
     '&.cm-editor': {
         borderRadius: '5px',
