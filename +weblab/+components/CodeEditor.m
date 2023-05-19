@@ -61,7 +61,7 @@ classdef CodeEditor < weblab.internal.FrameComponent & ...
                 text (1,1) string
                 offset (1,1) {mustBeCursorOffset} = "current"
             end
-            if (isnumeric(offset) || offset == "current")
+            if (isnumeric(offset) || offset ~= "current")
                 this.moveCursorToOffset(offset);
             end
             this.publish(weblab.event.Event("insert_text", text));
