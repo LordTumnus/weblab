@@ -33,6 +33,19 @@ classdef HTMLContainer < weblab.internal.FrameComponent & ...
                 struct("id",element.ID,"type",element.Type, "ns", element.Namespace));
             this.publish(ev);
         end
+
+        function deleteElement(this, element)
+            % DELETEELEMENT removes an HTML element inside the container (and
+            % all its descendants)
+            arguments
+                this (1,1) weblab.components.HTMLContainer
+                element (1,1) weblab.components.pseudo.HTMLElement
+            end
+            if any(this.HTMLChildren == element)
+                ev = weblab.event.Event("remove_html", element.id);
+                this.publish(ev);
+            end
+        end
     end
 
 

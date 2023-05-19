@@ -15,6 +15,9 @@ export default class HTMLContainer extends ComponentContainer {
         this.subscribe("insert_html", (data: { id: string, type: string, ns: string }) => {
             this.insertHTML(data.id, data.type, data.ns);
         })
+        this.subscribe("remove_html", (data: string) => {
+            this.deleteChild(data);
+        })
         this.subscribe("set_text", (data: { source: string, pdata: string }) => {
             this.setTextContent(data.source, data.pdata);
         })
@@ -45,6 +48,21 @@ export default class HTMLContainer extends ComponentContainer {
         r.id = id;
         this.#elements.push(<HTMLElement|SVGElement>r);
         this.appendChild(r);
+    }
+
+    /**
+     * Method for deleting descendants of the container
+     * @param id the id of the pseudoelement being removed
+     */
+    deleteChild(id: string) {
+        let child = this.#elements.find((c) => { return c.id === id });
+        if (child !== undefined) {
+            this.#elements = this.#elements.filter((e) => {
+                e.id !== id;
+            })
+            delete this.#listeners[id];
+            child.remove();
+        }
     }
 
     /**

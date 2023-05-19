@@ -58957,6 +58957,9 @@ class HTMLContainer extends ComponentContainer {
         this.subscribe("insert_html", (data) => {
             this.insertHTML(data.id, data.type, data.ns);
         });
+        this.subscribe("remove_html", (data) => {
+            this.deleteChild(data);
+        });
         this.subscribe("set_text", (data) => {
             this.setTextContent(data.source, data.pdata);
         });
@@ -58986,6 +58989,20 @@ class HTMLContainer extends ComponentContainer {
         r.id = id;
         __classPrivateFieldGet(this, _HTMLContainer_elements, "f").push(r);
         this.appendChild(r);
+    }
+    /**
+     * Method for deleting descendants of the container
+     * @param id the id of the pseudoelement being removed
+     */
+    deleteChild(id) {
+        let child = __classPrivateFieldGet(this, _HTMLContainer_elements, "f").find((c) => { return c.id === id; });
+        if (child !== undefined) {
+            __classPrivateFieldSet(this, _HTMLContainer_elements, __classPrivateFieldGet(this, _HTMLContainer_elements, "f").filter((e) => {
+                e.id !== id;
+            }), "f");
+            delete __classPrivateFieldGet(this, _HTMLContainer_listeners, "f")[id];
+            child.remove();
+        }
     }
     /**
      * Add text to an element
