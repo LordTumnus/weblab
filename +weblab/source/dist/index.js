@@ -43855,7 +43855,7 @@ class CodeEditor extends svelteComponent(CodeEditor$1) {
     }
     set uneditable_lines(lines) {
         const v = this._element._view;
-        markUneditableRange(v, lines);
+        markUneditableRange(v, [].concat.apply([], Array.of(lines)));
     }
 }
 customElements.define("weblab-editor", CodeEditor);

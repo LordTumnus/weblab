@@ -86,9 +86,9 @@ class CodeEditor extends svelteComponent(SvelteCodeEditor) {
         return [line.number, offset - line.from];
     }
 
-    set uneditable_lines(lines: number[]) {
+    set uneditable_lines(lines: number | number[]) {
         const v: EditorView = this._element._view;
-        markUneditableRange(v, lines);
+        markUneditableRange(v, [].concat.apply([],Array.of(lines)));
     }
 };
 export default CodeEditor;
