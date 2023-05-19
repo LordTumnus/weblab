@@ -14,6 +14,9 @@ classdef HTMLElement < weblab.internal.pseudo.PseudoComponent & ...
         % CALLBACKS: Mapping between the elements events and the callback
         % executed when they are triggered (like subscriptions)
         Callbacks struct = struct();
+        % HTMLCHILDREN: List of controllable HTML elements contained within this
+        % element
+        HTMLChildren weblab.components.pseudo.HTMLElement
     end
 
     methods (Access = ?weblab.components.HTMLContainer)
@@ -42,6 +45,7 @@ classdef HTMLElement < weblab.internal.pseudo.PseudoComponent & ...
                 namespace (1,1) string = "http://www.w3.org/1999/xhtml";
             end
             element = this.Container.createElement(type, namespace);
+            this.HTMLChildren(end + 1) = element;
             this.publish("insert_subhtml",...
                 struct("id",element.ID,"type",type,"ns",namespace));
         end
@@ -142,6 +146,13 @@ classdef HTMLElement < weblab.internal.pseudo.PseudoComponent & ...
                 this.Callbacks = rmfield(this.Callbacks, event);
                 this.publish("remove_listener", event);
             end
+        end
+
+        function delete(this)
+            % DELETE also deletes the children of the element, and instructs the
+            % container to publish an event to the view
+            arrayfun(@(x) delete(x), this.HTMLChildren);
+            this.Container.deleteElement(this);
         end
 
     end
