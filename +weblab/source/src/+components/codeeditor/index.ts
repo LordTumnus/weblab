@@ -88,7 +88,9 @@ class CodeEditor extends svelteComponent(SvelteCodeEditor) {
 
     set uneditable_lines(lines: number | number[]) {
         const v: EditorView = this._element._view;
-        markUneditableRange(v, [].concat.apply([],Array.of(lines)));
+        const n_lines = v.state.doc.lines;
+        let flat_lines : number[] = [].concat.apply([],Array.of(lines));
+        markUneditableRange(v, flat_lines.filter((n => n <= n_lines)));
     }
 };
 export default CodeEditor;
