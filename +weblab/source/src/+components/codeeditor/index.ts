@@ -5,6 +5,7 @@ import type { EditorView } from "@codemirror/view";
 import { undo, redo } from "@codemirror/commands";
 import { EditorState, Compartment, StateEffect } from "@codemirror/state";
 import readOnlyRangesExtension from "codemirror-readonly-ranges";
+import { markUneditableRange } from './src/extensions/readonly';
 
 //@ts-ignore
 import SvelteCodeEditor from './src/CodeEditor.svelte';
@@ -86,17 +87,9 @@ class CodeEditor extends svelteComponent(SvelteCodeEditor) {
         return [line.number, offset - line.from];
     }
 
-    set uneditable_lines(lines: number | number[]) {
+    set uneditable_lines(lines: number[]) {
         const v: EditorView = this._element._view;
-        if (this._uneditable === undefined) {
-            this._uneditable = new Compartment();
-            v.dispatch({
-                effects: StateEffect.appendConfig.of(this._uneditable.of([])),
-            })
-        }
-        v.dispatch({
-            effects: this._uneditable.reconfigure(updateUneditableLinesExtension(lines))
-        });
+        markUneditableRange(v, lines);
     }
 };
 export default CodeEditor;

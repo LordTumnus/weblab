@@ -3,6 +3,7 @@
   import { type Extension } from "@codemirror/state";
   import { StreamLanguage } from "@codemirror/language";
   import { ViewPlugin, EditorView } from "@codemirror/view";
+  import { getROExtension } from "./extensions/readonly";
   import getExtensions from "./extensions/basic";
   import darkTheme from "./theme/dark";
   import lightTheme from "./theme/light";
@@ -32,6 +33,7 @@
   $: extensions = [
     lang,
     viewP,
+    getROExtension(),
     ...getExtensions(
       line_numbers,
       highlight_active_line,
