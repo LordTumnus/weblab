@@ -35,6 +35,7 @@
     "cssobj": "^1.3.6",
     "deepdash-es": "^5.3.9",
     "lodash": "^4.17.21",
+    "split-grid": "^1.0.11",
     "svelte-codemirror-editor": "^1.1.0"
   }
 }
