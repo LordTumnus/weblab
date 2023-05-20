@@ -39,7 +39,7 @@ function iconMap = getIcons()
 % GETICONS returns a struct mapping file types to a weblab.style.Image
 % Icons are located in ../resources/file_icons
 
-iconDir = fullfile(fileparts(mfilename("fullpath")), "..", "resources", "file_icons");
+iconDir = fullfile(fileparts(mfilename("fullpath")), "resources", "file_icons");
 iconFiles = dir(iconDir);
 iconNames = strrep(string({iconFiles.name}),".png","");
 iconNames(1:2) = [];

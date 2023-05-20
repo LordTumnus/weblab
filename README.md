@@ -35,18 +35,18 @@ frame.insert(myComponent);
 
 > **Note:** The inserted component will occupy the full height and width of the
 > frame. If you want to reposition or resize it inside the figure, use the
-> `Position` property of the `Frame`.
+> `Position` and `Layout `properties of the `Frame`.
 
 ## Components
 
 These components are currently supported:
 
-- Tree: [docs](/docs/components/Tree.md) / [src](/%2Bweblab/%2Bcomponents/Tree.m)
-- TagBar: [docs](/docs/components/TagBar.md) / [src](/%2Bweblab/%2Bcomponents/TagBar.m)
-- TagFilterTree: [docs](/docs/components/TagFilterTree.md) / [src](/%2Bweblab/%2Bcomponents/TagFilterTree.m)
-- Progress: [docs](/docs/components/Porgress.md) / [src](/%2Bweblab/%2Bcomponents/Progress.m)
-- CodeEditor: [docs](/docs/components/CodeEditor.md) / [src](/%2Bweblab/%2Bcomponents/CodeEditor.m)
-- HTMLContainer: [docs](/docs/components/HTMLContainer.md) / [src](/%2Bweblab/%2Bcomponents/HTMLContainer.m)
+- Tree: [docs](/docs/components/Tree.md) / [src](/components/tree/%2Bweblab/%2Bcomponents/Tree.m)
+- TagBar: [docs](/docs/components/TagBar.md) / [src](/components/tag_bar/%2Bweblab/%2Bcomponents/TagBar.m)
+- TagFilterTree: [docs](/docs/components/TagFilterTree.md) / [src](/components/tag_filter_tree/%2Bweblab/%2Bcomponents/TagFilterTree.m)
+- Progress: [docs](/docs/components/Porgress.md) / [src](/components/progress/%2Bweblab/%2Bcomponents/Progress.m)
+- CodeEditor: [docs](/docs/components/CodeEditor.md) / [src](/components/code_editor/%2Bweblab/%2Bcomponents/CodeEditor.m)
+- HTMLContainer: [docs](/docs/components/HTMLContainer.md) / [src](/components/html_container/%2Bweblab/%2Bcomponents/HTMLContainer.m)
 
 More to come! These are the next planned components:
 - PDF renderer
