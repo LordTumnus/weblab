@@ -58,7 +58,7 @@ classdef HTMLContainer < weblab.internal.FrameComponent & ...
             end
             idx = this.HTMLChildren == element;
             if any(idx)
-                ev = weblab.event.Event("remove_html", element.ID);
+                ev = weblab.event.Event("remove_html", element.id);
                 this.publish(ev);
                 this.HTMLChildren(idx) = [];
             end
